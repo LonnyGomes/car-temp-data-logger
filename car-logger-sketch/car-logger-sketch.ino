@@ -3,11 +3,15 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
+#define LOOP_MS_DELAY 60000
+#define ERR_SD_INIT 2
+#define ERR_SD_OPEN 3
+
 // Set the pins used
 #define PIN_CARD_SELECT 4
-#define PIN_ONBOARD_LED 13
-// Data wire used for temp sensors
-#define PIN_ONE_WIRE_BUS 6
+#define PIN_ERROR_LED 13
+#define PIN_STATUS_LED 8
+#define PIN_ONE_WIRE_BUS 6 // Data wire used for temp sensors
 
 // define file reference to interface with the SD card
 File logfile;
@@ -23,9 +27,9 @@ void error(uint8_t errno) {
   while (1) {
     uint8_t i;
     for (i = 0; i < errno; i++) {
-      digitalWrite(PIN_ONBOARD_LED, HIGH);
+      digitalWrite(PIN_ERROR_LED, HIGH);
       delay(100);
-      digitalWrite(PIN_ONBOARD_LED, LOW);
+      digitalWrite(PIN_ERROR_LED, LOW);
       delay(100);
     }
     for (i = errno; i < 10; i++) {
@@ -37,7 +41,7 @@ void error(uint8_t errno) {
 void setup() {
   Serial.begin(9600);
   Serial.println("\r\nAnalog logger test");
-  pinMode(PIN_ONBOARD_LED, OUTPUT);
+  pinMode(PIN_ERROR_LED, OUTPUT);
 
   // Start up the temperature sensor library
   sensors.begin();
@@ -45,11 +49,11 @@ void setup() {
   // see if the card is present and can be initialized:
   if (!SD.begin(PIN_CARD_SELECT)) {
     Serial.println("Card init. failed!");
-    error(5);
+    error(ERR_SD_INIT);
   }
 
   char filename[15];
-  strcpy(filename, "/DATA_G00.TXT");
+  strcpy(filename, "/DATA_000.TXT");
   for (uint8_t i = 0; i < 100; i++) {
     filename[6] = '0' + i / 100;
     filename[7] = '0' + i / 10;
@@ -64,17 +68,16 @@ void setup() {
   if ( ! logfile ) {
     Serial.print("Couldnt create ");
     Serial.println(filename);
-    error(3);
+    error(ERR_SD_OPEN);
   }
   Serial.print("Writing to ");
   Serial.println(filename);
 
-  pinMode(PIN_ONBOARD_LED, OUTPUT);
-  pinMode(8, OUTPUT);
+  pinMode(PIN_ERROR_LED, OUTPUT);
+  pinMode(PIN_STATUS_LED, OUTPUT);
   Serial.println("Ready!");
 }
 
-uint8_t i = 0;
 void loop() {
   // Call sensors.requestTemperatures() to issue a global temperature and Requests to all devices on the bus
   sensors.requestTemperatures();
@@ -87,10 +90,13 @@ void loop() {
   Serial.print(" - Fahrenheit temperature #2: ");
   Serial.println(sensors.getTempFByIndex(1));
 
-  digitalWrite(8, HIGH);
-  logfile.print("A0 = "); logfile.println(analogRead(0));
-  Serial.print("A0 = "); Serial.println(analogRead(0));
-  digitalWrite(8, LOW);
+  digitalWrite(PIN_STATUS_LED, HIGH);
+  logfile.print(sensors.getTempFByIndex(0));
+  logfile.print(",");
+  logfile.println(sensors.getTempFByIndex(1));
+  logfile.flush(); // only keep for testing
 
-  delay(5000);
+  digitalWrite(PIN_STATUS_LED, LOW);
+
+  delay(5000); //LOOP_MS_DELAY
 }
