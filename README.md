@@ -8,7 +8,21 @@ An IoT project that logs temperature data with multiple sensors
 - [Adafruit DS1307 Real Time Clock Assembled Breakout Board](https://www.adafruit.com/product/3296)
 - [CR1220 coin cell battery](https://www.adafruit.com/product/380)
 - [Inland KS0329 Keyestudio 18B20 Waterproof Temperature Sensor (3 pack)](https://www.microcenter.com/product/639732/inland-ks0329-keyestudio-18b20-waterproof-temperature-sensor-47k-resistor-(3pcs))
+- [Lithium Ion Polymer 3.7v battery](https://www.adafruit.com/product/328)
 
+
+## Dependencies
+
+### Arduino
+
+#### Board managers
+
+- Arduino SAMD boards (32-bits ARm Cortex-M0+): >= v1.8.13
+- Adafruit SAMD Boards: >= 1.7.10
+
+#### Libraries
+- SD
+- SPI
 
 ## Resources
 
