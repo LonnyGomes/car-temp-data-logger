@@ -23,9 +23,10 @@ OneWire oneWire(PIN_ONE_WIRE_BUS);
 
 // Pass our oneWire reference to Dallas Temperature sensor
 DallasTemperature sensors(&oneWire);
+uint8_t sensorCount; // stores total number of connected sensors
 
 // Define reference to the RTC breakout
-RTC_PCF8523 rtc;;
+RTC_PCF8523 rtc;
 
 // blink out an error code
 void error(uint8_t errno) {
@@ -44,7 +45,7 @@ void error(uint8_t errno) {
 }
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(57600);
   Serial.println("\r\nAnalog logger test");
   pinMode(PIN_ERROR_LED, OUTPUT);
 
@@ -90,8 +91,14 @@ void setup() {
   // Start up the temperature sensor library
   sensors.begin();
 
+  // capture how many temperature sensors are found
+  sensorCount = sensors.getDeviceCount();
+
+  Serial.print("Total sensor count: ");
+  Serial.println(sensorCount);
+
   char filename[15];
-  strcpy(filename, "/DATA_000.TXT");
+  strcpy(filename, "/DATA_000.CSV");
   for (uint8_t i = 0; i < 100; i++) {
     filename[6] = '0' + i / 100;
     filename[7] = '0' + i / 10;
@@ -111,6 +118,16 @@ void setup() {
   Serial.print("Writing to ");
   Serial.println(filename);
 
+  // generate header for CSV file
+  char sensorName[12];
+  logfile.print("date,");
+  for (uint8_t si = 0; si < sensorCount - 1; si++) {
+    sprintf(sensorName, "sensor_%d,", si + 1);
+    logfile.print(sensorName);
+  }
+  sprintf(sensorName, "sensor_%d", sensorCount);
+  logfile.println(sensorName);
+
   pinMode(PIN_ERROR_LED, OUTPUT);
   pinMode(PIN_STATUS_LED, OUTPUT);
   Serial.println("Ready!");
@@ -128,21 +145,31 @@ void loop() {
   // Call sensors.requestTemperatures() to issue a global temperature and Requests to all devices on the bus
   sensors.requestTemperatures();
 
-  Serial.print("Celsius temperature: ");
-  // Why "byIndex"? You can have more than one IC on the same bus. 0 refers to the first IC on the wire
-  Serial.println(sensors.getTempCByIndex(0));
-  Serial.print(" - Fahrenheit temperature #1: ");
-  Serial.println(sensors.getTempFByIndex(0));
-  Serial.print(" - Fahrenheit temperature #2: ");
-  Serial.println(sensors.getTempFByIndex(1));
+  uint8_t curDeviceAddress = 0;
 
   digitalWrite(PIN_STATUS_LED, HIGH);
+
   logfile.print(dateBuf);
   logfile.print(",");
-  logfile.print(sensors.getTempFByIndex(0));
-  logfile.print(",");
-  logfile.println(sensors.getTempFByIndex(1));
-  logfile.flush(); // only keep for testing
+
+  for (uint8_t si = 0; si < sensorCount; si++) {
+    Serial.print("Temperature reading for sensor_");
+    Serial.println(si + 1);
+    Serial.print(" - Celsius temperature: ");
+    Serial.println(sensors.getTempCByIndex(si));
+    Serial.print(" - Fahrenheit temperature: ");
+    Serial.println(sensors.getTempFByIndex(si));
+
+    // handle last sensor output differently
+    if (si == (sensorCount - 1)) {
+      logfile.println(sensors.getTempFByIndex(si));
+    } else {
+      logfile.print(sensors.getTempFByIndex(si));
+      logfile.print(",");
+    }
+
+    logfile.flush(); // only keep for testing
+  }
 
   digitalWrite(PIN_STATUS_LED, LOW);
 
