@@ -21,9 +21,13 @@ An IoT project that logs temperature data with multiple sensors
 - Adafruit SAMD Boards: >= 1.7.10
 
 #### Libraries
+
 - SD
 - SPI
+- Dally Temperature by Miles Burton: >= v3.9.0
+- One Wire by Paul Stoffregen >= v2.3.7
 
 ## Resources
 
 - [M0 Data loggger tutorial](https://learn.adafruit.com/adafruit-feather-m0-adalogger)
+- [Guide for using DS18B20 Temperature Sensor with Arduino](https://randomnerdtutorials.com/guide-for-ds18b20-temperature-sensor-with-arduino/)

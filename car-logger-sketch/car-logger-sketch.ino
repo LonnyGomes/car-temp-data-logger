@@ -2,10 +2,12 @@
 #include <SD.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
+#include "RTClib.h"
 
-#define LOOP_MS_DELAY 60000
+#define LOOP_MS_DELAY 30000
 #define ERR_SD_INIT 2
 #define ERR_SD_OPEN 3
+#define ERR_RCT_INIT 4
 
 // Set the pins used
 #define PIN_CARD_SELECT 4
@@ -21,6 +23,9 @@ OneWire oneWire(PIN_ONE_WIRE_BUS);
 
 // Pass our oneWire reference to Dallas Temperature sensor
 DallasTemperature sensors(&oneWire);
+
+// Define reference to the RTC breakout
+RTC_PCF8523 rtc;;
 
 // blink out an error code
 void error(uint8_t errno) {
@@ -43,14 +48,47 @@ void setup() {
   Serial.println("\r\nAnalog logger test");
   pinMode(PIN_ERROR_LED, OUTPUT);
 
-  // Start up the temperature sensor library
-  sensors.begin();
+  if (! rtc.begin()) {
+    Serial.println("Couldn't find RTC");
+    Serial.flush();
+    error(ERR_RCT_INIT);
+  }
+
+  if (! rtc.initialized() || rtc.lostPower()) {
+    Serial.println("RTC is NOT initialized, let's set the time!");
+    // When time needs to be set on a new device, or after a power loss, the
+    // following line sets the RTC to the date & time this sketch was compiled
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+    // This line sets the RTC with an explicit date & time, for example to set
+    // January 21, 2014 at 3am you would call:
+    // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
+    //
+    // Note: allow 2 seconds after inserting battery or applying external power
+    // without battery before calling adjust(). This gives the PCF8523's
+    // crystal oscillator time to stabilize. If you call adjust() very quickly
+    // after the RTC is powered, lostPower() may still return true.
+  }
+
+  // When time needs to be re-set on a previously configured device, the
+  // following line sets the RTC to the date & time this sketch was compiled
+  // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  // This line sets the RTC with an explicit date & time, for example to set
+  // January 21, 2014 at 3am you would call:
+  //rtc.adjust(DateTime(2022, 6, 17, 20, 26, 0));
+
+  // When the RTC was stopped and stays connected to the battery, it has
+  // to be restarted by clearing the STOP bit. Let's do this to ensure
+  // the RTC is running.
+  rtc.start();
 
   // see if the card is present and can be initialized:
   if (!SD.begin(PIN_CARD_SELECT)) {
     Serial.println("Card init. failed!");
     error(ERR_SD_INIT);
   }
+
+  // Start up the temperature sensor library
+  sensors.begin();
 
   char filename[15];
   strcpy(filename, "/DATA_000.TXT");
@@ -79,6 +117,14 @@ void setup() {
 }
 
 void loop() {
+  DateTime time = rtc.now();
+
+  char dateBuf[32];
+  sprintf(dateBuf, "%d/%d/%d %02d:%02d:%02d",
+          time.month(), time.day(), time.year(), time.hour(), time.minute(), time.second()
+         );
+  Serial.println(dateBuf);
+
   // Call sensors.requestTemperatures() to issue a global temperature and Requests to all devices on the bus
   sensors.requestTemperatures();
 
@@ -91,6 +137,8 @@ void loop() {
   Serial.println(sensors.getTempFByIndex(1));
 
   digitalWrite(PIN_STATUS_LED, HIGH);
+  logfile.print(dateBuf);
+  logfile.print(",");
   logfile.print(sensors.getTempFByIndex(0));
   logfile.print(",");
   logfile.println(sensors.getTempFByIndex(1));
