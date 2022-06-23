@@ -9,6 +9,7 @@ An IoT project that logs temperature data with multiple sensors
 - [CR1220 coin cell battery](https://www.adafruit.com/product/380)
 - [Inland KS0329 Keyestudio 18B20 Waterproof Temperature Sensor (3 pack)](https://www.microcenter.com/product/639732/inland-ks0329-keyestudio-18b20-waterproof-temperature-sensor-47k-resistor-(3pcs))
 - [Lithium Ion Polymer 3.7v battery](https://www.adafruit.com/product/328)
+- [Adafruit ALS-PT19 Analog Light Sensor Breakout](https://www.adafruit.com/product/2748)
 
 
 ## Dependencies
