@@ -4,7 +4,7 @@
 #include <DallasTemperature.h>
 #include "RTClib.h"
 
-#define LOOP_MS_DELAY 30000
+#define LOOP_MS_DELAY 60000
 #define ERR_SD_INIT 2
 #define ERR_SD_OPEN 3
 #define ERR_RCT_INIT 4
@@ -14,6 +14,7 @@
 #define PIN_ERROR_LED 13
 #define PIN_STATUS_LED 8
 #define PIN_ONE_WIRE_BUS 6 // Data wire used for temp sensors
+#define PIN_PHOTOCELL 1
 
 // define file reference to interface with the SD card
 File logfile;
@@ -120,7 +121,7 @@ void setup() {
 
   // generate header for CSV file
   char sensorName[12];
-  logfile.print("date,");
+  logfile.print("date,photocell,");
   for (uint8_t si = 0; si < sensorCount - 1; si++) {
     sprintf(sensorName, "sensor_%d,", si + 1);
     logfile.print(sensorName);
@@ -134,6 +135,10 @@ void setup() {
 }
 
 void loop() {
+  int lightSensorVal = analogRead(PIN_PHOTOCELL);
+  Serial.print("PHOTOCELL: ");
+  Serial.println(lightSensorVal);
+
   DateTime time = rtc.now();
 
   char dateBuf[32];
@@ -150,6 +155,8 @@ void loop() {
   digitalWrite(PIN_STATUS_LED, HIGH);
 
   logfile.print(dateBuf);
+  logfile.print(",");
+  logfile.print(lightSensorVal);
   logfile.print(",");
 
   for (uint8_t si = 0; si < sensorCount; si++) {
@@ -173,5 +180,5 @@ void loop() {
 
   digitalWrite(PIN_STATUS_LED, LOW);
 
-  delay(5000); //LOOP_MS_DELAY
+  delay(LOOP_MS_DELAY); //LOOP_MS_DELAY
 }
