@@ -1,3 +1,5 @@
+export type SensorName = 'sensor_1' | 'sensor_2';
+export const SENSOR_NAMES: SensorName[] = ['sensor_1', 'sensor_2'];
 export interface TemperatureCSVDataModel {
   date: string;
   photocell: string;
