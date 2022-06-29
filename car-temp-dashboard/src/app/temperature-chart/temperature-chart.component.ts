@@ -2,15 +2,12 @@
 // v4 https://d3-graph-gallery.com/graph/line_several_group.html
 // v6 https://observablehq.com/@bjedwards/multi-line-chart-d3-v6
 // https://stackoverflow.com/questions/41905301/angular-2-typescript-d3-type-issue-property-x-does-not-exist-on-type-number
+// simple multiline - https://bl.ocks.org/d3noob/ed0864ef6ec6af1e360917c29f4b08da
 
 import { Component, OnInit } from '@angular/core';
 import { DataManagerService } from '../services/data-manager.service';
 import * as d3 from 'd3';
-import { color, range, svg } from 'd3';
-import {
-  SENSOR_NAMES,
-  TemperatureDataModel,
-} from '../models/temperature-data.model';
+import { TemperatureDataModel } from '../models/temperature-data.model';
 
 @Component({
   selector: 'app-temperature-chart',
@@ -19,7 +16,7 @@ import {
 })
 export class TemperatureChartComponent implements OnInit {
   constructor(private dataManger: DataManagerService) {}
-  margin = { top: 20, right: 20, bottom: 30, left: 60 };
+  margin = { top: 20, right: 60, bottom: 30, left: 60 };
   width = 960 - this.margin.left - this.margin.right;
   height = 500 - this.margin.top - this.margin.bottom;
 
@@ -62,15 +59,31 @@ export class TemperatureChartComponent implements OnInit {
 
     chart.append('g').call(d3.axisLeft(y));
 
-    const sensor1Line = d3
+    // Add light sensitivity Y axis
+    const y2 = d3
+      .scaleLinear()
+      .domain([0, d3.max(data, (d) => d.photocell) as number])
+      .range([this.height, 0]);
+
+    chart
+      .append('g')
+      .attr('transform', `translate(${this.width}, 0)`)
+      .call(d3.axisRight(y2));
+
+    const internalSensor = d3
       .line<TemperatureDataModel>()
       .x((d) => x(d.date))
       .y((d) => y(d.sensor_1));
 
-    const sensor2Line = d3
+    const externalSensor = d3
       .line<TemperatureDataModel>()
       .x((d) => x(d.date))
       .y((d) => y(d.sensor_2));
+
+    const lightSensitivityLine = d3
+      .line<TemperatureDataModel>()
+      .x((d) => x(d.date))
+      .y((d) => y2(d.photocell));
 
     // add sensor line 1
     chart
@@ -80,7 +93,7 @@ export class TemperatureChartComponent implements OnInit {
       .style('stroke', 'blue')
       .style('fill', 'none')
       .style('stroke-width', '1.5px')
-      .attr('d', sensor1Line);
+      .attr('d', internalSensor);
 
     // add sensor line 2
     chart
@@ -90,7 +103,17 @@ export class TemperatureChartComponent implements OnInit {
       .style('stroke', 'red')
       .style('fill', 'none')
       .style('stroke-width', '1.5px')
-      .attr('d', sensor2Line);
+      .attr('d', externalSensor);
+
+    // add light sensitivity line
+    chart
+      .append('path')
+      .data([data])
+      .attr('class', 'line')
+      .style('stroke', 'yellow')
+      .style('fill', 'none')
+      .style('stroke-width', '1.5px')
+      .attr('d', lightSensitivityLine);
 
     return chart;
   }
