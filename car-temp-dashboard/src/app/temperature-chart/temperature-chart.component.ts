@@ -21,13 +21,16 @@ export class TemperatureChartComponent implements OnInit {
   height = 500 - this.margin.top - this.margin.bottom;
   containerWidth = this.width + this.margin.left + this.margin.right;
   containerHeight = this.height + this.margin.top + this.margin.bottom;
+  temperatureData: TemperatureDataModel[] = [];
 
   async ngOnInit() {
-    const chart = await this.initChart('chart');
-    console.log('chart', chart);
+    this.temperatureData = await this.dataManger.loadData(
+      'assets/data/20220623.csv'
+    );
+    const chart = await this.initChart('chart', this.temperatureData);
   }
 
-  private async initChart(selectorId: string) {
+  private initChart(selectorId: string, data: TemperatureDataModel[]) {
     const chart = d3
       .select(`#${selectorId}`)
       .append('svg')
@@ -37,8 +40,6 @@ export class TemperatureChartComponent implements OnInit {
       .attr('preserveAspectRatio', 'xMinYMin meet')
       .append('g')
       .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`);
-
-    const data = await this.dataManger.loadData('assets/data/20220623.csv');
 
     // Add X axis --> it is a date format
     const [startDate, endDate] = d3.extent(data, (d) => d.date);
