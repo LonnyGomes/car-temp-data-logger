@@ -1,14 +1,15 @@
 // references
 // v4 https://d3-graph-gallery.com/graph/line_several_group.html
 // v6 https://observablehq.com/@bjedwards/multi-line-chart-d3-v6
+// https://stackoverflow.com/questions/41905301/angular-2-typescript-d3-type-issue-property-x-does-not-exist-on-type-number
 
 import { Component, OnInit } from '@angular/core';
 import { DataManagerService } from '../services/data-manager.service';
 import * as d3 from 'd3';
 import { color, range, svg } from 'd3';
 import {
-  SensorDataModel,
   SENSOR_NAMES,
+  TemperatureDataModel,
 } from '../models/temperature-data.model';
 
 @Component({
@@ -18,9 +19,9 @@ import {
 })
 export class TemperatureChartComponent implements OnInit {
   constructor(private dataManger: DataManagerService) {}
-  margin = { top: 10, right: 30, bottom: 30, left: 60 };
-  width = 460 - this.margin.left - this.margin.right;
-  height = 400 - this.margin.top - this.margin.bottom;
+  margin = { top: 20, right: 20, bottom: 30, left: 60 };
+  width = 960 - this.margin.left - this.margin.right;
+  height = 500 - this.margin.top - this.margin.bottom;
 
   async ngOnInit() {
     const chart = await this.initChart('chart');
@@ -34,16 +35,9 @@ export class TemperatureChartComponent implements OnInit {
       .attr('width', this.width + this.margin.left + this.margin.right)
       .attr('height', this.height + this.margin.top + this.margin.bottom)
       .append('g')
-      .attr(
-        'transform',
-        `translate("${this.margin.left}", "${this.margin.top}")`
-      );
+      .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`);
 
     const data = await this.dataManger.loadData('assets/data/20220623.csv');
-
-    // group data
-    const groupedData = d3.group(data, (d) => d.id);
-    console.log('groupedData', groupedData);
 
     // Add X axis --> it is a date format
     const [startDate, endDate] = d3.extent(data, (d) => d.date);
@@ -55,21 +49,48 @@ export class TemperatureChartComponent implements OnInit {
     chart
       .append('g')
       .attr('transform', `translate(0, ${this.height})`)
-      .call(d3.axisBottom(x).ticks(5));
+      .call(d3.axisBottom(x));
 
     // Add Y axis
     const y = d3
       .scaleLinear()
-      .domain([0, d3.max(data, (d) => d.temperature) as number])
+      .domain([
+        0,
+        d3.max(data, (d) => Math.max(d.sensor_1, d.sensor_2)) as number,
+      ])
       .range([this.height, 0]);
 
     chart.append('g').call(d3.axisLeft(y));
 
-    // color palate
-    const color = d3
-      .scaleOrdinal()
-      .domain(Array.from(groupedData.keys()) as string[])
-      .range(['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00']);
+    const sensor1Line = d3
+      .line<TemperatureDataModel>()
+      .x((d) => x(d.date))
+      .y((d) => y(d.sensor_1));
+
+    const sensor2Line = d3
+      .line<TemperatureDataModel>()
+      .x((d) => x(d.date))
+      .y((d) => y(d.sensor_2));
+
+    // add sensor line 1
+    chart
+      .append('path')
+      .data([data])
+      .attr('class', 'line')
+      .style('stroke', 'blue')
+      .style('fill', 'none')
+      .style('stroke-width', '1.5px')
+      .attr('d', sensor1Line);
+
+    // add sensor line 2
+    chart
+      .append('path')
+      .data([data])
+      .attr('class', 'line')
+      .style('stroke', 'red')
+      .style('fill', 'none')
+      .style('stroke-width', '1.5px')
+      .attr('d', sensor2Line);
 
     return chart;
   }
