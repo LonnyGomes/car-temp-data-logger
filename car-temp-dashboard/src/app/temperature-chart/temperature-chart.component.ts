@@ -55,20 +55,50 @@ export class TemperatureChartComponent implements OnInit {
         0,
         d3.max(data, (d) => Math.max(d.sensor_1, d.sensor_2)) as number,
       ])
-      .range([this.height, 0]);
+      .range([this.height, 0])
+      .nice();
 
-    chart.append('g').call(d3.axisLeft(y));
+    chart
+      .append('g')
+      .call(d3.axisLeft(y))
+      // Add label
+      .append('text')
+      .attr('class', 'chart-axis-label')
+      .text('Temperature (°)')
+      .attr('transform', 'rotate(-90)')
+      .attr(
+        'x',
+        -(
+          this.margin.top +
+          (this.height - this.margin.top - this.margin.bottom) / 2
+        )
+      )
+      .attr('y', -40); // Relative to the y axis
 
     // Add light sensitivity Y axis
     const y2 = d3
       .scaleLinear()
       .domain([0, d3.max(data, (d) => d.photocell) as number])
-      .range([this.height, 0]);
+      .range([this.height, 0])
+      .nice();
 
     chart
       .append('g')
       .attr('transform', `translate(${this.width}, 0)`)
-      .call(d3.axisRight(y2));
+      .call(d3.axisRight(y2))
+      // Add label
+      .append('text')
+      .attr('class', 'chart-axis-label')
+      .text('Light sensitivity (%)')
+      .attr('transform', 'rotate(-90)')
+      .attr(
+        'x',
+        -(
+          this.margin.top +
+          (this.height - this.margin.top - this.margin.bottom) / 2
+        )
+      )
+      .attr('y', 45); // Relative to the y axis
 
     const internalSensor = d3
       .line<TemperatureDataModel>()
@@ -110,7 +140,7 @@ export class TemperatureChartComponent implements OnInit {
       .append('path')
       .data([data])
       .attr('class', 'line')
-      .style('stroke', 'yellow')
+      .style('stroke', '#fbbc04')
       .style('fill', 'none')
       .style('stroke-width', '1.5px')
       .attr('d', lightSensitivityLine);
