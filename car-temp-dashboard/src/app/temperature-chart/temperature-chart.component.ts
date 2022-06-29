@@ -19,6 +19,8 @@ export class TemperatureChartComponent implements OnInit {
   margin = { top: 20, right: 60, bottom: 30, left: 60 };
   width = 960 - this.margin.left - this.margin.right;
   height = 500 - this.margin.top - this.margin.bottom;
+  containerWidth = this.width + this.margin.left + this.margin.right;
+  containerHeight = this.height + this.margin.top + this.margin.bottom;
 
   async ngOnInit() {
     const chart = await this.initChart('chart');
@@ -29,8 +31,10 @@ export class TemperatureChartComponent implements OnInit {
     const chart = d3
       .select(`#${selectorId}`)
       .append('svg')
-      .attr('width', this.width + this.margin.left + this.margin.right)
-      .attr('height', this.height + this.margin.top + this.margin.bottom)
+      //.attr('width', this.containerWidth)
+      //.attr('height', this.containerHeight)
+      .attr('viewBox', `0 0 ${this.containerWidth} ${this.containerHeight}`)
+      .attr('preserveAspectRatio', 'xMinYMin meet')
       .append('g')
       .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`);
 
