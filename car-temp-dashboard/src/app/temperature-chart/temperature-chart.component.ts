@@ -124,30 +124,24 @@ export class TemperatureChartComponent implements OnInit {
     chart
       .append('path')
       .data([data])
-      .attr('class', 'line')
+      .attr('class', 'chart-line')
       .style('stroke', 'blue')
-      .style('fill', 'none')
-      .style('stroke-width', '1.5px')
       .attr('d', internalSensor);
 
     // add sensor line 2
     chart
       .append('path')
       .data([data])
-      .attr('class', 'line')
+      .attr('class', 'chart-line')
       .style('stroke', 'red')
-      .style('fill', 'none')
-      .style('stroke-width', '1.5px')
       .attr('d', externalSensor);
 
     // add light sensitivity line
     chart
       .append('path')
       .data([data])
-      .attr('class', 'line')
+      .attr('class', 'chart-line')
       .style('stroke', '#fbbc04')
-      .style('fill', 'none')
-      .style('stroke-width', '1.5px')
       .attr('d', lightSensitivityLine);
 
     return chart;
