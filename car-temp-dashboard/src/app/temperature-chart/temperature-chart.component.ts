@@ -16,7 +16,7 @@ import { TemperatureDataModel } from '../models/temperature-data.model';
 })
 export class TemperatureChartComponent implements OnInit {
   constructor(private dataManger: DataManagerService) {}
-  margin = { top: 20, right: 60, bottom: 30, left: 60 };
+  margin = { top: 20, right: 60, bottom: 40, left: 60 };
   width = 960 - this.margin.left - this.margin.right;
   height = 500 - this.margin.top - this.margin.bottom;
   containerWidth = this.width + this.margin.left + this.margin.right;
@@ -51,7 +51,13 @@ export class TemperatureChartComponent implements OnInit {
     chart
       .append('g')
       .attr('transform', `translate(0, ${this.height})`)
-      .call(d3.axisBottom(x));
+      .call(d3.axisBottom(x))
+      // Add label
+      .append('text')
+      .attr('class', 'chart-axis-label')
+      .text('Time')
+      .attr('x', (this.width - this.margin.left - this.margin.right) / 2)
+      .attr('y', this.margin.bottom); // Relative to the y axis
 
     // Add Y axis
     const y = d3
