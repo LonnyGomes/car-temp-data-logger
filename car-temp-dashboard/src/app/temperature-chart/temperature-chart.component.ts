@@ -19,7 +19,7 @@ import {
 })
 export class TemperatureChartComponent implements OnInit {
   constructor(private dataManger: DataManagerService) {}
-  margin = { top: 20, right: 60, bottom: 40, left: 60 };
+  margin = { top: 20, right: 60, bottom: 50, left: 60 };
   width = 960 - this.margin.left - this.margin.right;
   height = 350 - this.margin.top - this.margin.bottom;
   containerWidth = this.width + this.margin.left + this.margin.right;
@@ -78,7 +78,11 @@ export class TemperatureChartComponent implements OnInit {
 
     chart
       .append('g')
-      .call(d3.axisLeft(y))
+      .call(
+        d3
+          .axisLeft(y)
+          .tickFormat((d, idx) => (idx % 2 === 0 ? d.toString() : ''))
+      )
       // Add label
       .append('text')
       .attr('class', 'chart-axis-label')
@@ -93,6 +97,13 @@ export class TemperatureChartComponent implements OnInit {
       )
       .attr('y', -40); // Relative to the y axis
 
+    // add y grid axis
+    const yAxisGrid = d3
+      .axisLeft(y)
+      .tickSize(-this.width)
+      .tickFormat((d) => '');
+    chart.append('g').attr('class', 'chart-axis-grid y').call(yAxisGrid);
+
     // Add light sensitivity Y axis
     const y2 = d3
       .scaleLinear()
@@ -103,7 +114,7 @@ export class TemperatureChartComponent implements OnInit {
     chart
       .append('g')
       .attr('transform', `translate(${this.width}, 0)`)
-      .call(d3.axisRight(y2))
+      .call(d3.axisRight(y2).ticks(5))
       // Add label
       .append('text')
       .attr('class', 'chart-axis-label')
