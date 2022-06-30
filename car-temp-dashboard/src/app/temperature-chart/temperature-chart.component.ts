@@ -7,7 +7,10 @@
 import { Component, OnInit } from '@angular/core';
 import { DataManagerService } from '../services/data-manager.service';
 import * as d3 from 'd3';
-import { TemperatureDataModel } from '../models/temperature-data.model';
+import {
+  TemperatureDataMetadata,
+  TemperatureDataModel,
+} from '../models/temperature-data.model';
 
 @Component({
   selector: 'app-temperature-chart',
@@ -18,16 +21,20 @@ export class TemperatureChartComponent implements OnInit {
   constructor(private dataManger: DataManagerService) {}
   margin = { top: 20, right: 60, bottom: 40, left: 60 };
   width = 960 - this.margin.left - this.margin.right;
-  height = 500 - this.margin.top - this.margin.bottom;
+  height = 350 - this.margin.top - this.margin.bottom;
   containerWidth = this.width + this.margin.left + this.margin.right;
   containerHeight = this.height + this.margin.top + this.margin.bottom;
   temperatureData: TemperatureDataModel[] = [];
+  temperatureMetadata: TemperatureDataMetadata | null = null;
 
   async ngOnInit() {
     this.temperatureData = await this.dataManger.loadData(
       '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220629.csv'
     );
     const chart = await this.initChart('chart', this.temperatureData);
+    this.temperatureMetadata = this.dataManger.analyzeDataset(
+      this.temperatureData
+    );
   }
 
   private initChart(selectorId: string, data: TemperatureDataModel[]) {
