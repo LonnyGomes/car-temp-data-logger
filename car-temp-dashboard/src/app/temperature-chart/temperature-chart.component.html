@@ -1,0 +1,32 @@
+
+<h2>Car temperatures for {{ temperatureMetadata?.startTimestamp | date: 'fullDate'}}</h2>
+<h3>{{ temperatureMetadata?.startTimestamp | date:'shortTime' }} - {{ temperatureMetadata?.endTimestamp | date:'shortTime'}}</h3>
+
+<div id="chart"></div>
+
+<div class="temperature-metadata">
+  <table>
+    <tr>
+      <th>Internal max</th>
+      <th>Internal min</th>
+    </tr>
+    <tr>
+      <td><span class="table-data">{{ temperatureMetadata?.internalMax}}</span></td>
+      <td><span class="table-data">{{ temperatureMetadata?.internalMin}}</span></td>
+    </tr>
+  </table>
+
+  <table>
+    <tr>
+      <th>Mean</th>
+      <th>Median</th>
+      <th>Mode</th>
+    </tr>
+    <tr>
+      <td><span class="table-data">{{ temperatureMetadata?.internalMean}}</span></td>
+      <td><span class="table-data">{{ temperatureMetadata?.internalMed}}</span></td>
+      <td><span class="table-data">{{ temperatureMetadata?.internalMod}}</span></td>
+    </tr>
+  </table>
+
+</div>
