@@ -1,5 +1,5 @@
 
-<h2>Car temperature for {{ temperatureMetadata?.startTimestamp | date: 'mediumDate'}}</h2>
+<h2>Car temperatures for {{ temperatureMetadata?.startTimestamp | date: 'fullDate'}}</h2>
 <h3>{{ temperatureMetadata?.startTimestamp | date:'shortTime' }} - {{ temperatureMetadata?.endTimestamp | date:'shortTime'}}</h3>
 
 <div id="chart"></div>
