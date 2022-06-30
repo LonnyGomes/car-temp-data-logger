@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { sampleTemperatureData } from 'src/fixtures/sample-data';
 
 import { DataManagerService } from './data-manager.service';
 
@@ -6,6 +7,28 @@ describe('DataManagerService', () => {
   let service: DataManagerService;
   const SAMPLE_CSV = './fixtures/sample.csv';
   const SAMPLE_CSV_DATA_LEN = 4;
+  const SAMPLE_DATA_START_TIMESTAMP = new Date(
+    'Wed Jun 29 2022 08:29:45 GMT-0400 (EDT)'
+  );
+  const SAMPLE_DATA_END_TIMESTAMP = new Date(
+    'Wed Jun 29 2022 10:09:57 GMT-0400 (EDT)'
+  );
+  const SAMPLE_DATA_EXTERNAL_MAX = 93.99;
+  const SAMPLE_DATA_INTERNAL_MIN = 72.27;
+  const SAMPLE_DATA_INTERNAL_MAX = 108.39;
+  const SAMPLE_DATA_INTERNAL_AVG = 94.44;
+  const SAMPLE_DATA_INTERNAL_MED = 95.79;
+  const SAMPLE_DATA_INTERNAL_MOD = 105;
+  const SAMPLE_DATA_DATASET_RESULTS = {
+    startTimestamp: SAMPLE_DATA_START_TIMESTAMP,
+    endTimestamp: SAMPLE_DATA_END_TIMESTAMP,
+    externalMax: SAMPLE_DATA_EXTERNAL_MAX,
+    internalMax: SAMPLE_DATA_INTERNAL_MAX,
+    internalMin: SAMPLE_DATA_INTERNAL_MIN,
+    internalMean: SAMPLE_DATA_INTERNAL_AVG,
+    internalMed: SAMPLE_DATA_INTERNAL_MED,
+    internalMod: SAMPLE_DATA_INTERNAL_MOD,
+  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
@@ -25,6 +48,17 @@ describe('DataManagerService', () => {
       const data = await service.loadData(SAMPLE_CSV);
       expect(data).toBeTruthy();
       expect(data.length).toEqual(SAMPLE_CSV_DATA_LEN);
+    });
+  });
+
+  describe('analyzeDataset', () => {
+    it('should be defined', () => {
+      expect(service.analyzeDataset).toBeTruthy();
+    });
+
+    it('should return statistical data for a dataset', () => {
+      const results = service.analyzeDataset(sampleTemperatureData);
+      expect(results).toEqual(SAMPLE_DATA_DATASET_RESULTS);
     });
   });
 });

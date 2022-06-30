@@ -13,3 +13,14 @@ export interface TemperatureDataModel {
   sensor_1: number;
   sensor_2: number;
 }
+
+export interface TemperatureDataMetadata {
+  startTimestamp: Date;
+  endTimestamp: Date;
+  externalMax: number;
+  internalMax: number;
+  internalMin: number;
+  internalMean: number;
+  internalMed: number;
+  internalMod: number;
+}
