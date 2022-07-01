@@ -33,16 +33,14 @@ export class TemperatureChartComponent implements OnInit {
     LIGHT: 'Light sensitivity (%)',
   };
 
-  constructor(private dataManger: DataManagerService) {}
+  constructor(private dm: DataManagerService) {}
 
   async ngOnInit() {
-    this.temperatureData = await this.dataManger.loadData(
+    this.temperatureData = await this.dm.loadData(
       '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220629.csv'
     );
     const chart = await this.initChart('chart', this.temperatureData);
-    this.temperatureMetadata = this.dataManger.analyzeDataset(
-      this.temperatureData
-    );
+    this.temperatureMetadata = this.dm.analyzeDataset(this.temperatureData);
   }
 
   private initChart(selectorId: string, data: TemperatureDataModel[]) {
@@ -170,7 +168,7 @@ export class TemperatureChartComponent implements OnInit {
       .attr('class', 'chart-line')
       .style(
         'stroke',
-        this.dataManger.SENSOR_COLOR[TemperatureDataField.INTERNAL_SENSOR]
+        this.dm.SENSOR_COLOR[TemperatureDataField.INTERNAL_SENSOR]
       )
       .attr('d', internalSensor);
 
@@ -181,7 +179,7 @@ export class TemperatureChartComponent implements OnInit {
       .attr('class', 'chart-line')
       .style(
         'stroke',
-        this.dataManger.SENSOR_COLOR[TemperatureDataField.EXTERNAL_SENSOR]
+        this.dm.SENSOR_COLOR[TemperatureDataField.EXTERNAL_SENSOR]
       )
       .attr('d', externalSensor);
 
@@ -190,10 +188,7 @@ export class TemperatureChartComponent implements OnInit {
       .append('path')
       .data([data])
       .attr('class', 'chart-line')
-      .style(
-        'stroke',
-        this.dataManger.SENSOR_COLOR[TemperatureDataField.LIGHT_SENSOR]
-      )
+      .style('stroke', this.dm.SENSOR_COLOR[TemperatureDataField.LIGHT_SENSOR])
       .attr('d', lightSensitivityLine);
 
     return chart;
