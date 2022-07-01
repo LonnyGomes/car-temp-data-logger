@@ -21,8 +21,8 @@ import {
 })
 export class TemperatureChartComponent implements OnInit {
   margin = { top: 20, right: 60, bottom: 50, left: 60 };
-  width = 960 - this.margin.left - this.margin.right;
-  height = 350 - this.margin.top - this.margin.bottom;
+  width = 900 - this.margin.left - this.margin.right;
+  height = 650 - this.margin.top - this.margin.bottom;
   containerWidth = this.width + this.margin.left + this.margin.right;
   containerHeight = this.height + this.margin.top + this.margin.bottom;
   temperatureData: TemperatureDataModel[] = [];

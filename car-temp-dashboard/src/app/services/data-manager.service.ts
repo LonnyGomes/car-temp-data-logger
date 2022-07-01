@@ -19,9 +19,9 @@ export class DataManagerService {
   };
 
   SENSOR_LABEL = {
-    [TemperatureDataField.EXTERNAL_SENSOR]: 'External °',
-    [TemperatureDataField.INTERNAL_SENSOR]: 'Internal °',
-    [TemperatureDataField.LIGHT_SENSOR]: 'Light sensitivity',
+    [TemperatureDataField.EXTERNAL_SENSOR]: 'External °F',
+    [TemperatureDataField.INTERNAL_SENSOR]: 'Car cabin °F',
+    [TemperatureDataField.LIGHT_SENSOR]: 'Light sensitivity %',
   };
 
   constructor() {}
