@@ -11,6 +11,7 @@ import {
   TemperatureDataField,
   TemperatureDataMetadata,
   TemperatureDataModel,
+  TemperatureLegendItem,
 } from '../models/temperature-data.model';
 
 @Component({
@@ -26,6 +27,7 @@ export class TemperatureChartComponent implements OnInit {
   containerHeight = this.height + this.margin.top + this.margin.bottom;
   temperatureData: TemperatureDataModel[] = [];
   temperatureMetadata: TemperatureDataMetadata | null = null;
+  chartLegendItems: TemperatureLegendItem[];
 
   private CHART_LABEL = {
     TIME: 'Time',
@@ -33,7 +35,9 @@ export class TemperatureChartComponent implements OnInit {
     LIGHT: 'Light sensitivity (%)',
   };
 
-  constructor(private dm: DataManagerService) {}
+  constructor(private dm: DataManagerService) {
+    this.chartLegendItems = this.dm.getLegendItems();
+  }
 
   async ngOnInit() {
     this.temperatureData = await this.dm.loadData(

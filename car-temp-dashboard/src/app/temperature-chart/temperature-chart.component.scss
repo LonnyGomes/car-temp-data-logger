@@ -18,3 +18,22 @@
       font-size: 0.9rem;
     }
 }
+
+.chart-legend {
+  display: flex;
+  justify-content: center;
+
+  .chart-legend-item {
+    display: flex;
+    align-items: center;
+
+    .chart-legend-label {
+      padding: 5px 10px;
+    }
+
+    .chart-legend-color {
+      width: 30px;
+      height: 8px;
+    }
+  }
+}

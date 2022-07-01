@@ -2,6 +2,12 @@
 <h2>Car temperatures for {{ temperatureMetadata?.startTimestamp | date: 'fullDate'}}</h2>
 <h3>{{ temperatureMetadata?.startTimestamp | date:'shortTime' }} - {{ temperatureMetadata?.endTimestamp | date:'shortTime'}}</h3>
 
+<div class="chart-legend">
+  <div *ngFor="let legendItem of chartLegendItems" class="chart-legend-item">
+    <div class="chart-legend-color" [ngStyle]="{'background-color': legendItem.color} "></div>
+    <span class="chart-legend-label" [innerText]="legendItem.label"></span>
+  </div>
+</div>
 <div id="chart"></div>
 
 <div class="temperature-metadata">
