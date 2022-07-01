@@ -21,7 +21,7 @@
 </div>
 
 <div class="dashboard-card">
-  <span class="header">{{ temperatureMetadata?.startTimestamp | date: 'fullDate'}}  ({{ temperatureMetadata?.startTimestamp | date:'shortTime' }} - {{ temperatureMetadata?.endTimestamp | date:'shortTime'}})</span>
+  <span class="header">{{ temperatureMetadata?.startTimestamp | date: 'ccc, MMMM c YYYY'}}  ({{ temperatureMetadata?.startTimestamp | date:'HH:mm' }} - {{ temperatureMetadata?.endTimestamp | date:'HH:mm'}})</span>
 
   <div class="chart-legend">
     <div *ngFor="let legendItem of chartLegendItems" class="chart-legend-item">
