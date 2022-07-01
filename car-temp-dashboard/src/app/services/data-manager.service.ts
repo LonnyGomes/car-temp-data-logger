@@ -13,9 +13,9 @@ import {
 })
 export class DataManagerService {
   SENSOR_COLOR = {
-    [TemperatureDataField.EXTERNAL_SENSOR]: 'red',
-    [TemperatureDataField.INTERNAL_SENSOR]: 'blue',
-    [TemperatureDataField.LIGHT_SENSOR]: '#fbbc04',
+    [TemperatureDataField.EXTERNAL_SENSOR]: '#F87474',
+    [TemperatureDataField.INTERNAL_SENSOR]: '#3AB0FF',
+    [TemperatureDataField.LIGHT_SENSOR]: '#FFB562',
   };
 
   SENSOR_LABEL = {
