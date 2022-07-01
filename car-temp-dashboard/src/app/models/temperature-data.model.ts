@@ -8,6 +8,11 @@ export enum TemperatureDataField {
   EXTERNAL_SENSOR = 'sensor_2',
 }
 
+export interface TemperatureLegendItem {
+  label: string;
+  color: string;
+}
+
 export interface TemperatureCSVDataModel {
   date: string;
   photocell: string;

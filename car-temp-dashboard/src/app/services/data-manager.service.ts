@@ -5,6 +5,7 @@ import {
   TemperatureDataField,
   TemperatureDataMetadata,
   TemperatureDataModel,
+  TemperatureLegendItem,
 } from '../models/temperature-data.model';
 
 @Injectable({
@@ -80,5 +81,28 @@ export class DataManagerService {
       internalMed,
       internalMod,
     };
+  }
+
+  /**
+   * Returns list of legend items
+   * @returns list of label / color pairs
+   */
+  getLegendItems(): TemperatureLegendItem[] {
+    const fields: (
+      | TemperatureDataField.LIGHT_SENSOR
+      | TemperatureDataField.EXTERNAL_SENSOR
+      | TemperatureDataField.INTERNAL_SENSOR
+    )[] = [
+      TemperatureDataField.INTERNAL_SENSOR,
+      TemperatureDataField.EXTERNAL_SENSOR,
+      TemperatureDataField.LIGHT_SENSOR,
+    ];
+
+    return fields.map((field) => {
+      return {
+        label: this.SENSOR_LABEL[field],
+        color: this.SENSOR_COLOR[field],
+      };
+    });
   }
 }

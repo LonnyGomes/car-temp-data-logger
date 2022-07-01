@@ -63,6 +63,18 @@ describe('DataManagerService', () => {
     });
   });
 
+  describe('getLegendItems', () => {
+    it('should return list of legend items', () => {
+      const results = service.getLegendItems();
+      expect(results.length).toEqual(3);
+
+      for (const item of results) {
+        expect(item.color).toBeDefined();
+        expect(item.label).toBeDefined();
+      }
+    });
+  });
+
   describe('SENSOR_COLOR', () => {
     it('should define colors for each sensor', () => {
       expect(
