@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { csv, max, min, median, mean, mode } from 'd3';
 import {
   TemperatureCSVDataModel,
+  TemperatureDataField,
   TemperatureDataMetadata,
   TemperatureDataModel,
 } from '../models/temperature-data.model';
@@ -10,8 +11,25 @@ import {
   providedIn: 'root',
 })
 export class DataManagerService {
+  SENSOR_COLOR = {
+    [TemperatureDataField.EXTERNAL_SENSOR]: 'red',
+    [TemperatureDataField.INTERNAL_SENSOR]: 'blue',
+    [TemperatureDataField.LIGHT_SENSOR]: '#fbbc04',
+  };
+
+  SENSOR_LABEL = {
+    [TemperatureDataField.EXTERNAL_SENSOR]: 'External °',
+    [TemperatureDataField.INTERNAL_SENSOR]: 'Internal °',
+    [TemperatureDataField.LIGHT_SENSOR]: 'Light sensitivity',
+  };
+
   constructor() {}
 
+  /**
+   * Retrieves and processes a temperature dataset
+   * @param filename URL to CSV
+   * @returns temperature dataset
+   */
   async loadData(filename: string) {
     let results: TemperatureDataModel[] = [];
     try {

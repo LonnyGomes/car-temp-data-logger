@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { sampleTemperatureData } from 'src/fixtures/sample-data';
+import { TemperatureDataField } from '../models/temperature-data.model';
 
 import { DataManagerService } from './data-manager.service';
 
@@ -59,6 +60,34 @@ describe('DataManagerService', () => {
     it('should return statistical data for a dataset', () => {
       const results = service.analyzeDataset(sampleTemperatureData);
       expect(results).toEqual(SAMPLE_DATA_DATASET_RESULTS);
+    });
+  });
+
+  describe('SENSOR_COLOR', () => {
+    it('should define colors for each sensor', () => {
+      expect(
+        service.SENSOR_COLOR[TemperatureDataField.EXTERNAL_SENSOR]
+      ).toBeDefined();
+      expect(
+        service.SENSOR_COLOR[TemperatureDataField.INTERNAL_SENSOR]
+      ).toBeDefined();
+      expect(
+        service.SENSOR_COLOR[TemperatureDataField.LIGHT_SENSOR]
+      ).toBeDefined();
+    });
+  });
+
+  describe('SENSOR_LABEL', () => {
+    it('should define legend labels for each sensor', () => {
+      expect(
+        service.SENSOR_LABEL[TemperatureDataField.EXTERNAL_SENSOR]
+      ).toBeDefined();
+      expect(
+        service.SENSOR_LABEL[TemperatureDataField.INTERNAL_SENSOR]
+      ).toBeDefined();
+      expect(
+        service.SENSOR_LABEL[TemperatureDataField.LIGHT_SENSOR]
+      ).toBeDefined();
     });
   });
 });
