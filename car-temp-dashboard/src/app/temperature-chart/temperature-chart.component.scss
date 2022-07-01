@@ -37,3 +37,26 @@
     }
   }
 }
+
+.temperature-metadata {
+  display: flex;
+  flex-direction: column;
+
+  margin: 10px 0px;
+  align-items: center;
+
+  .header {
+    padding-top: 20px;
+  }
+}
+
+.temperature-metadata-table {
+
+  th {
+    padding: 5px 5px;
+  }
+
+  .table-data {
+    padding: 5px 10px;
+  }
+}

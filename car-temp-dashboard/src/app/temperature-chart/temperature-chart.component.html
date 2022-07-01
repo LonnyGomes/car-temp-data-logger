@@ -11,24 +11,18 @@
 <div id="chart"></div>
 
 <div class="temperature-metadata">
-  <table>
+  <span class="header">Car Cabin Temperature Stats</span>
+  <table class="temperature-metadata-table">
     <tr>
       <th>Internal max</th>
       <th>Internal min</th>
-    </tr>
-    <tr>
-      <td><span class="table-data">{{ temperatureMetadata?.internalMax}}</span></td>
-      <td><span class="table-data">{{ temperatureMetadata?.internalMin}}</span></td>
-    </tr>
-  </table>
-
-  <table>
-    <tr>
       <th>Mean</th>
       <th>Median</th>
       <th>Mode</th>
     </tr>
     <tr>
+      <td><span class="table-data">{{ temperatureMetadata?.internalMax}}</span></td>
+      <td><span class="table-data">{{ temperatureMetadata?.internalMin}}</span></td>
       <td><span class="table-data">{{ temperatureMetadata?.internalMean}}</span></td>
       <td><span class="table-data">{{ temperatureMetadata?.internalMed}}</span></td>
       <td><span class="table-data">{{ temperatureMetadata?.internalMod}}</span></td>
