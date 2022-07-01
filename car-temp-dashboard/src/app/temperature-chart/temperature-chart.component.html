@@ -1,16 +1,3 @@
-
-<div class="dashboard-card">
-  <span class="header">{{ temperatureMetadata?.startTimestamp | date: 'fullDate'}}  ({{ temperatureMetadata?.startTimestamp | date:'shortTime' }} - {{ temperatureMetadata?.endTimestamp | date:'shortTime'}})</span>
-
-  <div class="chart-legend">
-    <div *ngFor="let legendItem of chartLegendItems" class="chart-legend-item">
-      <div class="chart-legend-color" [ngStyle]="{'background-color': legendItem.color} "></div>
-      <span class="chart-legend-label" [innerText]="legendItem.label"></span>
-    </div>
-  </div>
-  <div id="chart"></div>
-</div>
-
 <div class="dashboard-card">
   <div class="temperature-metadata">
     <span class="header">Car Cabin Temperature Stats</span>
@@ -30,6 +17,18 @@
         <td><span class="table-data">{{ temperatureMetadata?.internalMod}}</span></td>
       </tr>
     </table>
-
   </div>
 </div>
+
+<div class="dashboard-card">
+  <span class="header">{{ temperatureMetadata?.startTimestamp | date: 'fullDate'}}  ({{ temperatureMetadata?.startTimestamp | date:'shortTime' }} - {{ temperatureMetadata?.endTimestamp | date:'shortTime'}})</span>
+
+  <div class="chart-legend">
+    <div *ngFor="let legendItem of chartLegendItems" class="chart-legend-item">
+      <div class="chart-legend-color" [ngStyle]="{'background-color': legendItem.color} "></div>
+      <span class="chart-legend-label" [innerText]="legendItem.label"></span>
+    </div>
+  </div>
+  <div id="chart"></div>
+</div>
+
