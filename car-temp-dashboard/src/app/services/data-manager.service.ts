@@ -41,10 +41,17 @@ export class DataManagerService {
       // remap data into proper types and values
       results = data.map((curItem) => {
         return {
-          date: new Date(curItem.date),
-          photocell: (Number(curItem.photocell) / 1000) * 100,
-          sensor_1: Number(curItem.sensor_1),
-          sensor_2: Number(curItem.sensor_2),
+          [TemperatureDataField.DATE]: new Date(
+            curItem[TemperatureDataField.DATE]
+          ),
+          [TemperatureDataField.LIGHT_SENSOR]:
+            (Number(curItem[TemperatureDataField.LIGHT_SENSOR]) / 1000) * 100,
+          [TemperatureDataField.INTERNAL_SENSOR]: Number(
+            curItem[TemperatureDataField.INTERNAL_SENSOR]
+          ),
+          [TemperatureDataField.EXTERNAL_SENSOR]: Number(
+            curItem[TemperatureDataField.EXTERNAL_SENSOR]
+          ),
         };
       });
     } catch (error: any) {
@@ -61,15 +68,37 @@ export class DataManagerService {
    * @returns statistical metadata for dataset
    */
   analyzeDataset(data: TemperatureDataModel[]): TemperatureDataMetadata {
-    const externalMax = max(data, (d) => d.sensor_2) as number;
-    const internalMin = min(data, (d) => d.sensor_1) as number;
-    const internalMax = max(data, (d) => d.sensor_1) as number;
-    const internalMed = median(data, (d) => d.sensor_1) as number;
-    const internalMod = mode(data, (d) => Math.round(d.sensor_1)) as number;
+    const externalMax = max(
+      data,
+      (d) => d[TemperatureDataField.EXTERNAL_SENSOR]
+    ) as number;
+
+    const internalMin = min(
+      data,
+      (d) => d[TemperatureDataField.INTERNAL_SENSOR]
+    ) as number;
+
+    const internalMax = max(
+      data,
+      (d) => d[TemperatureDataField.INTERNAL_SENSOR]
+    ) as number;
+
+    const internalMed = median(
+      data,
+      (d) => d[TemperatureDataField.INTERNAL_SENSOR]
+    ) as number;
+
+    const internalMod = mode(data, (d) =>
+      Math.round(d[TemperatureDataField.INTERNAL_SENSOR])
+    ) as number;
+
     const internalMean =
-      Math.round((mean(data, (d) => d.sensor_1) as number) * 100) / 100;
-    const startTimestamp = data[0].date;
-    const endTimestamp = data[data.length - 1].date;
+      Math.round(
+        (mean(data, (d) => d[TemperatureDataField.INTERNAL_SENSOR]) as number) *
+          100
+      ) / 100;
+    const startTimestamp = data[0][TemperatureDataField.DATE];
+    const endTimestamp = data[data.length - 1][TemperatureDataField.DATE];
 
     return {
       startTimestamp,

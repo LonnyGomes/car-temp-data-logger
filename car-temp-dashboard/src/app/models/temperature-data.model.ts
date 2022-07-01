@@ -1,6 +1,3 @@
-export type SensorName = 'sensor_1' | 'sensor_2';
-export const SENSOR_NAMES: SensorName[] = ['sensor_1', 'sensor_2'];
-
 export enum TemperatureDataField {
   DATE = 'date',
   LIGHT_SENSOR = 'photocell',
@@ -8,23 +5,32 @@ export enum TemperatureDataField {
   EXTERNAL_SENSOR = 'sensor_2',
 }
 
+export type SensorName =
+  | TemperatureDataField.INTERNAL_SENSOR
+  | TemperatureDataField.EXTERNAL_SENSOR;
+
+export const SENSOR_NAMES: SensorName[] = [
+  TemperatureDataField.INTERNAL_SENSOR,
+  TemperatureDataField.EXTERNAL_SENSOR,
+];
+
 export interface TemperatureLegendItem {
   label: string;
   color: string;
 }
 
 export interface TemperatureCSVDataModel {
-  date: string;
-  photocell: string;
-  sensor_1: string;
-  sensor_2: string;
+  [TemperatureDataField.DATE]: string;
+  [TemperatureDataField.LIGHT_SENSOR]: string;
+  [TemperatureDataField.INTERNAL_SENSOR]: string;
+  [TemperatureDataField.EXTERNAL_SENSOR]: string;
 }
 
 export interface TemperatureDataModel {
-  date: Date;
-  photocell: number;
-  sensor_1: number;
-  sensor_2: number;
+  [TemperatureDataField.DATE]: Date;
+  [TemperatureDataField.LIGHT_SENSOR]: number;
+  [TemperatureDataField.INTERNAL_SENSOR]: number;
+  [TemperatureDataField.EXTERNAL_SENSOR]: number;
 }
 
 export interface TemperatureDataMetadata {

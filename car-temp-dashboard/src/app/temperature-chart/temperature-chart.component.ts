@@ -57,7 +57,10 @@ export class TemperatureChartComponent implements OnInit {
       .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`);
 
     // Add X axis --> it is a date format
-    const [startDate, endDate] = d3.extent(data, (d) => d.date);
+    const [startDate, endDate] = d3.extent(
+      data,
+      (d) => d[TemperatureDataField.DATE]
+    );
     const d1: Date = startDate as Date;
     const d2: Date = endDate as Date;
 
@@ -79,7 +82,12 @@ export class TemperatureChartComponent implements OnInit {
       .scaleLinear()
       .domain([
         0,
-        d3.max(data, (d) => Math.max(d.sensor_1, d.sensor_2)) as number,
+        d3.max(data, (d) =>
+          Math.max(
+            d[TemperatureDataField.INTERNAL_SENSOR],
+            d[TemperatureDataField.EXTERNAL_SENSOR]
+          )
+        ) as number,
       ])
       .range([this.height, 0])
       .nice();
@@ -115,7 +123,10 @@ export class TemperatureChartComponent implements OnInit {
     // Add light sensitivity Y axis
     const y2 = d3
       .scaleLinear()
-      .domain([0, d3.max(data, (d) => d.photocell) as number])
+      .domain([
+        0,
+        d3.max(data, (d) => d[TemperatureDataField.LIGHT_SENSOR]) as number,
+      ])
       .range([this.height, 0])
       .nice();
 
@@ -139,18 +150,18 @@ export class TemperatureChartComponent implements OnInit {
 
     const internalSensor = d3
       .line<TemperatureDataModel>()
-      .x((d) => x(d.date))
-      .y((d) => y(d.sensor_1));
+      .x((d) => x(d[TemperatureDataField.DATE]))
+      .y((d) => y(d[TemperatureDataField.INTERNAL_SENSOR]));
 
     const externalSensor = d3
       .line<TemperatureDataModel>()
-      .x((d) => x(d.date))
-      .y((d) => y(d.sensor_2));
+      .x((d) => x(d[TemperatureDataField.DATE]))
+      .y((d) => y(d[TemperatureDataField.EXTERNAL_SENSOR]));
 
     const lightSensitivityLine = d3
       .line<TemperatureDataModel>()
-      .x((d) => x(d.date))
-      .y((d) => y2(d.photocell));
+      .x((d) => x(d[TemperatureDataField.DATE]))
+      .y((d) => y2(d[TemperatureDataField.LIGHT_SENSOR]));
 
     // add sensor line 1
     chart
