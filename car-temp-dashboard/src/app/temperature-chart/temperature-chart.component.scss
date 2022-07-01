@@ -1,3 +1,4 @@
+@import '../../styles.scss';
 ::ng-deep {
     .chart-axis-label {
       fill: #000;
@@ -44,10 +45,6 @@
 
   margin: 10px 0px;
   align-items: center;
-
-  .header {
-    padding-top: 20px;
-  }
 }
 
 .temperature-metadata-table {

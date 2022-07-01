@@ -1,1 +1,41 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Mukta:wght@600&family=Public+Sans&display=swap');
+
+// color palette reference: https://colorhunt.co/palette/ff5959676fa3cddeffeef2ff
+$clr-primary: #676FA3;
+$clr-secondary: #FF5959;
+$clr-tertiary: #EEF2FF;
+
+$font-body: 'Public Sans', sans-serif;
+$font-header: 'Mukta', sans-serif;
+
+$clr-font: #282828;
+
+$clr-bg: $clr-tertiary;
+$clr-dash-bg: #FFF;
+
+
+body {
+  padding: 0px;
+  margin: 0px;
+  font-size: 16px;
+  background-color: $clr-bg;
+  color: $clr-font;
+  font-family: $font-body;
+}
+
+.dashboard-card {
+  display: flex;
+  flex-direction: column;
+  background-color: $clr-dash-bg;
+  border: 1px solid darken($clr-dash-bg, 15%);
+  border-radius: 7px;
+  margin: 20px;
+  padding: 10px;
+
+  .header {
+    font-family: $font-header;
+    font-size: 1.5rem;
+    color: $clr-primary;
+    text-align: center;
+  }
+}

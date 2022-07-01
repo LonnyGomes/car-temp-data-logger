@@ -1,32 +1,35 @@
 
-<h2>Car temperatures for {{ temperatureMetadata?.startTimestamp | date: 'fullDate'}}</h2>
-<h3>{{ temperatureMetadata?.startTimestamp | date:'shortTime' }} - {{ temperatureMetadata?.endTimestamp | date:'shortTime'}}</h3>
+<div class="dashboard-card">
+  <span class="header">{{ temperatureMetadata?.startTimestamp | date: 'fullDate'}}  ({{ temperatureMetadata?.startTimestamp | date:'shortTime' }} - {{ temperatureMetadata?.endTimestamp | date:'shortTime'}})</span>
 
-<div class="chart-legend">
-  <div *ngFor="let legendItem of chartLegendItems" class="chart-legend-item">
-    <div class="chart-legend-color" [ngStyle]="{'background-color': legendItem.color} "></div>
-    <span class="chart-legend-label" [innerText]="legendItem.label"></span>
+  <div class="chart-legend">
+    <div *ngFor="let legendItem of chartLegendItems" class="chart-legend-item">
+      <div class="chart-legend-color" [ngStyle]="{'background-color': legendItem.color} "></div>
+      <span class="chart-legend-label" [innerText]="legendItem.label"></span>
+    </div>
   </div>
+  <div id="chart"></div>
 </div>
-<div id="chart"></div>
 
-<div class="temperature-metadata">
-  <span class="header">Car Cabin Temperature Stats</span>
-  <table class="temperature-metadata-table">
-    <tr>
-      <th>Internal max</th>
-      <th>Internal min</th>
-      <th>Mean</th>
-      <th>Median</th>
-      <th>Mode</th>
-    </tr>
-    <tr>
-      <td><span class="table-data">{{ temperatureMetadata?.internalMax}}</span></td>
-      <td><span class="table-data">{{ temperatureMetadata?.internalMin}}</span></td>
-      <td><span class="table-data">{{ temperatureMetadata?.internalMean}}</span></td>
-      <td><span class="table-data">{{ temperatureMetadata?.internalMed}}</span></td>
-      <td><span class="table-data">{{ temperatureMetadata?.internalMod}}</span></td>
-    </tr>
-  </table>
+<div class="dashboard-card">
+  <div class="temperature-metadata">
+    <span class="header">Car Cabin Temperature Stats</span>
+    <table class="temperature-metadata-table">
+      <tr>
+        <th>Maximum</th>
+        <th>Minimum</th>
+        <th>Mean</th>
+        <th>Median</th>
+        <th>Mode</th>
+      </tr>
+      <tr>
+        <td><span class="table-data">{{ temperatureMetadata?.internalMax}}</span></td>
+        <td><span class="table-data">{{ temperatureMetadata?.internalMin}}</span></td>
+        <td><span class="table-data">{{ temperatureMetadata?.internalMean}}</span></td>
+        <td><span class="table-data">{{ temperatureMetadata?.internalMed}}</span></td>
+        <td><span class="table-data">{{ temperatureMetadata?.internalMod}}</span></td>
+      </tr>
+    </table>
 
+  </div>
 </div>
