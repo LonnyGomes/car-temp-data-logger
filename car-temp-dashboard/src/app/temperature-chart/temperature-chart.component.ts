@@ -41,7 +41,7 @@ export class TemperatureChartComponent implements OnInit {
 
   async ngOnInit() {
     this.temperatureData = await this.dm.loadData(
-      '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220629.csv'
+      '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220630.csv'
     );
     const chart = await this.initChart('chart', this.temperatureData);
     this.temperatureMetadata = this.dm.analyzeDataset(this.temperatureData);
