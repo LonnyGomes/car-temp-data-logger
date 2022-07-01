@@ -8,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 import { DataManagerService } from '../services/data-manager.service';
 import * as d3 from 'd3';
 import {
+  TemperatureDataField,
   TemperatureDataMetadata,
   TemperatureDataModel,
 } from '../models/temperature-data.model';
@@ -18,7 +19,6 @@ import {
   styleUrls: ['./temperature-chart.component.scss'],
 })
 export class TemperatureChartComponent implements OnInit {
-  constructor(private dataManger: DataManagerService) {}
   margin = { top: 20, right: 60, bottom: 50, left: 60 };
   width = 960 - this.margin.left - this.margin.right;
   height = 350 - this.margin.top - this.margin.bottom;
@@ -26,6 +26,14 @@ export class TemperatureChartComponent implements OnInit {
   containerHeight = this.height + this.margin.top + this.margin.bottom;
   temperatureData: TemperatureDataModel[] = [];
   temperatureMetadata: TemperatureDataMetadata | null = null;
+
+  private CHART_LABEL = {
+    TIME: 'Time',
+    TEMPERATURE: 'Temperature (°F)',
+    LIGHT: 'Light sensitivity (%)',
+  };
+
+  constructor(private dataManger: DataManagerService) {}
 
   async ngOnInit() {
     this.temperatureData = await this.dataManger.loadData(
@@ -62,7 +70,7 @@ export class TemperatureChartComponent implements OnInit {
       // Add label
       .append('text')
       .attr('class', 'chart-axis-label')
-      .text('Time')
+      .text(this.CHART_LABEL.TIME)
       .attr('x', (this.width - this.margin.left - this.margin.right) / 2)
       .attr('y', this.margin.bottom); // Relative to the y axis
 
@@ -86,7 +94,7 @@ export class TemperatureChartComponent implements OnInit {
       // Add label
       .append('text')
       .attr('class', 'chart-axis-label')
-      .text('Temperature (°)')
+      .text(this.CHART_LABEL.TEMPERATURE)
       .attr('transform', 'rotate(-90)')
       .attr(
         'x',
@@ -118,7 +126,7 @@ export class TemperatureChartComponent implements OnInit {
       // Add label
       .append('text')
       .attr('class', 'chart-axis-label')
-      .text('Light sensitivity (%)')
+      .text(this.CHART_LABEL.LIGHT)
       .attr('transform', 'rotate(-90)')
       .attr(
         'x',
@@ -149,7 +157,10 @@ export class TemperatureChartComponent implements OnInit {
       .append('path')
       .data([data])
       .attr('class', 'chart-line')
-      .style('stroke', 'blue')
+      .style(
+        'stroke',
+        this.dataManger.SENSOR_COLOR[TemperatureDataField.INTERNAL_SENSOR]
+      )
       .attr('d', internalSensor);
 
     // add sensor line 2
@@ -157,7 +168,10 @@ export class TemperatureChartComponent implements OnInit {
       .append('path')
       .data([data])
       .attr('class', 'chart-line')
-      .style('stroke', 'red')
+      .style(
+        'stroke',
+        this.dataManger.SENSOR_COLOR[TemperatureDataField.EXTERNAL_SENSOR]
+      )
       .attr('d', externalSensor);
 
     // add light sensitivity line
@@ -165,7 +179,10 @@ export class TemperatureChartComponent implements OnInit {
       .append('path')
       .data([data])
       .attr('class', 'chart-line')
-      .style('stroke', '#fbbc04')
+      .style(
+        'stroke',
+        this.dataManger.SENSOR_COLOR[TemperatureDataField.LIGHT_SENSOR]
+      )
       .attr('d', lightSensitivityLine);
 
     return chart;
