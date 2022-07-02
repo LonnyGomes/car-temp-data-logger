@@ -8,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 import { DataManagerService } from '../services/data-manager.service';
 import * as d3 from 'd3';
 import {
+  SensorName,
   TemperatureDataField,
   TemperatureDataMetadata,
   TemperatureDataModel,
@@ -55,6 +56,17 @@ export class TemperatureChartComponent implements OnInit {
 
   onTemperatureDropdownChange(evt: any) {
     console.log(this.selectedDataset);
+  }
+
+  private genD3Line(
+    sensorName: SensorName,
+    x: d3.ScaleTime<number, number>,
+    y: d3.ScaleLinear<number, number>
+  ) {
+    return d3
+      .line<TemperatureDataModel>()
+      .x((d) => x(d[TemperatureDataField.DATE]))
+      .y((d) => y(d[sensorName]));
   }
 
   private initChart(selectorId: string, data: TemperatureDataModel[]) {
@@ -160,21 +172,6 @@ export class TemperatureChartComponent implements OnInit {
       )
       .attr('y', 45); // Relative to the y axis
 
-    const internalSensor = d3
-      .line<TemperatureDataModel>()
-      .x((d) => x(d[TemperatureDataField.DATE]))
-      .y((d) => y(d[TemperatureDataField.INTERNAL_SENSOR]));
-
-    const externalSensor = d3
-      .line<TemperatureDataModel>()
-      .x((d) => x(d[TemperatureDataField.DATE]))
-      .y((d) => y(d[TemperatureDataField.EXTERNAL_SENSOR]));
-
-    const lightSensitivityLine = d3
-      .line<TemperatureDataModel>()
-      .x((d) => x(d[TemperatureDataField.DATE]))
-      .y((d) => y2(d[TemperatureDataField.LIGHT_SENSOR]));
-
     // add sensor line 1
     chart
       .append('path')
@@ -184,7 +181,7 @@ export class TemperatureChartComponent implements OnInit {
         'stroke',
         this.dm.SENSOR_COLOR[TemperatureDataField.INTERNAL_SENSOR]
       )
-      .attr('d', internalSensor);
+      .attr('d', this.genD3Line(TemperatureDataField.INTERNAL_SENSOR, x, y));
 
     // add sensor line 2
     chart
@@ -195,7 +192,7 @@ export class TemperatureChartComponent implements OnInit {
         'stroke',
         this.dm.SENSOR_COLOR[TemperatureDataField.EXTERNAL_SENSOR]
       )
-      .attr('d', externalSensor);
+      .attr('d', this.genD3Line(TemperatureDataField.EXTERNAL_SENSOR, x, y));
 
     // add light sensitivity line
     chart
@@ -203,7 +200,7 @@ export class TemperatureChartComponent implements OnInit {
       .data([data])
       .attr('class', 'chart-line')
       .style('stroke', this.dm.SENSOR_COLOR[TemperatureDataField.LIGHT_SENSOR])
-      .attr('d', lightSensitivityLine);
+      .attr('d', this.genD3Line(TemperatureDataField.LIGHT_SENSOR, x, y));
 
     return chart;
   }

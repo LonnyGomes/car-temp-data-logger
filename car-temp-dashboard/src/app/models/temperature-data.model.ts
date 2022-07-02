@@ -7,11 +7,14 @@ export enum TemperatureDataField {
 
 export type SensorName =
   | TemperatureDataField.INTERNAL_SENSOR
-  | TemperatureDataField.EXTERNAL_SENSOR;
+  | TemperatureDataField.EXTERNAL_SENSOR
+  | TemperatureDataField.LIGHT_SENSOR;
+
 
 export const SENSOR_NAMES: SensorName[] = [
   TemperatureDataField.INTERNAL_SENSOR,
   TemperatureDataField.EXTERNAL_SENSOR,
+  TemperatureDataField.LIGHT_SENSOR,
 ];
 
 export interface TemperatureLegendItem {
