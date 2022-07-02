@@ -9,6 +9,7 @@ import { DataManagerService } from '../services/data-manager.service';
 import * as d3 from 'd3';
 import {
   SensorName,
+  SENSOR_NAMES,
   TemperatureDataField,
   TemperatureDataMetadata,
   TemperatureDataModel,
@@ -39,6 +40,8 @@ export class TemperatureChartComponent implements OnInit {
     LIGHT: 'Light sensitivity (%)',
   };
 
+  private TRANSITION_DURATION = 2000;
+
   constructor(private dm: DataManagerService) {
     this.chartLegendItems = this.dm.getLegendItems();
   }
@@ -47,15 +50,16 @@ export class TemperatureChartComponent implements OnInit {
     this.temperatureListings = this.dm.loadDatasets();
     this.selectedDataset = this.temperatureListings.datasets[0].url;
 
-    this.temperatureData = await this.dm.loadData(
-      '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220630.csv'
-    );
+    //'//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220630.csv'
+    this.temperatureData = await this.dm.loadData(this.selectedDataset);
     const chart = await this.initChart('chart', this.temperatureData);
     this.temperatureMetadata = this.dm.analyzeDataset(this.temperatureData);
   }
 
-  onTemperatureDropdownChange(evt: any) {
-    console.log(this.selectedDataset);
+  async onTemperatureDropdownChange(url: string) {
+    this.temperatureData = await this.dm.loadData(url);
+    this.temperatureMetadata = this.dm.analyzeDataset(this.temperatureData);
+    this.updateChart('chart', this.temperatureData);
   }
 
   private genD3Line(
@@ -92,6 +96,7 @@ export class TemperatureChartComponent implements OnInit {
 
     chart
       .append('g')
+      .attr('class', 'axis chart-axis-x')
       .attr('transform', `translate(0, ${this.height})`)
       .call(d3.axisBottom(x))
       // Add label
@@ -118,6 +123,7 @@ export class TemperatureChartComponent implements OnInit {
 
     chart
       .append('g')
+      .attr('class', 'axis chart-axis-y')
       .call(
         d3
           .axisLeft(y)
@@ -156,6 +162,7 @@ export class TemperatureChartComponent implements OnInit {
 
     chart
       .append('g')
+      .attr('class', 'axis chart-axis-y-right')
       .attr('transform', `translate(${this.width}, 0)`)
       .call(d3.axisRight(y2).ticks(5))
       // Add label
@@ -176,7 +183,7 @@ export class TemperatureChartComponent implements OnInit {
     chart
       .append('path')
       .data([data])
-      .attr('class', 'chart-line')
+      .attr('class', `chart-line ${TemperatureDataField.INTERNAL_SENSOR}`)
       .style(
         'stroke',
         this.dm.SENSOR_COLOR[TemperatureDataField.INTERNAL_SENSOR]
@@ -187,7 +194,7 @@ export class TemperatureChartComponent implements OnInit {
     chart
       .append('path')
       .data([data])
-      .attr('class', 'chart-line')
+      .attr('class', `chart-line ${TemperatureDataField.EXTERNAL_SENSOR}`)
       .style(
         'stroke',
         this.dm.SENSOR_COLOR[TemperatureDataField.EXTERNAL_SENSOR]
@@ -198,10 +205,93 @@ export class TemperatureChartComponent implements OnInit {
     chart
       .append('path')
       .data([data])
-      .attr('class', 'chart-line')
+      .attr('class', `chart-line ${TemperatureDataField.LIGHT_SENSOR}`)
       .style('stroke', this.dm.SENSOR_COLOR[TemperatureDataField.LIGHT_SENSOR])
-      .attr('d', this.genD3Line(TemperatureDataField.LIGHT_SENSOR, x, y));
+      .attr('d', this.genD3Line(TemperatureDataField.LIGHT_SENSOR, x, y2));
 
     return chart;
+  }
+
+  private updateChart(selectorId: string, data: TemperatureDataModel[]) {
+    const chart = d3.select(`#${selectorId}`);
+
+    // Add x axis
+    const [startDate, endDate] = d3.extent(
+      data,
+      (d) => d[TemperatureDataField.DATE]
+    );
+    const d1: Date = startDate as Date;
+    const d2: Date = endDate as Date;
+
+    const x = d3.scaleTime().domain([d1, d2]).range([0, this.width]);
+    const xAxis = d3.axisBottom(x);
+    chart
+      .selectAll<SVGGElement, TemperatureDataModel[]>('.chart-axis-x')
+      .transition()
+      .duration(this.TRANSITION_DURATION)
+      .call(xAxis);
+
+    // Add left Y axis
+    const yLeft = d3
+      .scaleLinear()
+      .domain([
+        0,
+        d3.max(data, (d) =>
+          Math.max(
+            d[TemperatureDataField.INTERNAL_SENSOR],
+            d[TemperatureDataField.EXTERNAL_SENSOR]
+          )
+        ) as number,
+      ])
+      .range([this.height, 0])
+      .nice();
+
+    const yLeftAxis = d3
+      .axisLeft(yLeft)
+      .tickFormat((d, idx) => (idx % 2 === 0 ? d.toString() : ''));
+
+    chart
+      .selectAll<SVGGElement, TemperatureDataModel[]>('.chart-axis-y')
+      .transition()
+      .duration(this.TRANSITION_DURATION)
+      .call(yLeftAxis);
+
+    // Add light sensitivity Y axis to the right side
+    const yRight = d3
+      .scaleLinear()
+      .domain([
+        0,
+        d3.max(data, (d) => d[TemperatureDataField.LIGHT_SENSOR]) as number,
+      ])
+      .range([this.height, 0])
+      .nice();
+
+    const yRightAxis = d3.axisRight(yRight).ticks(5);
+    chart
+      .selectAll<SVGGElement, TemperatureDataModel[]>('.chart-axis-y-right')
+      .transition()
+      .duration(this.TRANSITION_DURATION)
+      .call(yRightAxis);
+
+    // update lines
+    for (let sensorName of SENSOR_NAMES) {
+      const y =
+        sensorName === TemperatureDataField.LIGHT_SENSOR ? yRight : yLeft;
+      const lines = chart
+        .selectAll<SVGPathElement, TemperatureDataModel[]>(`.${sensorName}`)
+        .data([data]);
+
+      lines.exit().transition().duration(this.TRANSITION_DURATION).remove();
+
+      lines
+        .enter()
+        .append('path')
+        .attr('class', `chart-line ${sensorName}`)
+        .style('stroke', this.dm.SENSOR_COLOR[sensorName])
+        .merge(lines)
+        .transition()
+        .duration(this.TRANSITION_DURATION)
+        .attr('d', this.genD3Line(sensorName, x, y));
+    }
   }
 }
