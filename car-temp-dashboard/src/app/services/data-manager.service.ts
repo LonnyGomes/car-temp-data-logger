@@ -66,12 +66,24 @@ export class DataManagerService {
     return {
       datasets: [
         {
+          date: '6/30/2022',
+          url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220630.csv',
+        },
+        {
           date: '6/29/2022',
           url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220629.csv',
         },
         {
-          date: '6/30/2022',
-          url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220630.csv',
+          date: '6/28/2022',
+          url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220628.csv',
+        },
+        {
+          date: '6/27/2022',
+          url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220627.csv',
+        },
+        {
+          date: '6/26/2022',
+          url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220626.csv',
         },
       ],
     };
