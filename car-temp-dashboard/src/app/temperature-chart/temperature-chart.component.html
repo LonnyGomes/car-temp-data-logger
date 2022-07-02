@@ -25,7 +25,7 @@
     <option *ngFor="let dataset of temperatureListings?.datasets" [value]="dataset.url">{{dataset.date}}</option>
   </select>
 
-  <span class="header">{{ temperatureMetadata?.startTimestamp | date: 'ccc, MMMM c YYYY'}}  ({{ temperatureMetadata?.startTimestamp | date:'HH:mm' }} - {{ temperatureMetadata?.endTimestamp | date:'HH:mm'}})</span>
+  <span class="header">{{ temperatureMetadata?.startTimestamp | date: 'ccc, MMMM dd YYYY'}}  ({{ temperatureMetadata?.startTimestamp | date:'HH:mm' }} - {{ temperatureMetadata?.endTimestamp | date:'HH:mm'}})</span>
 
   <div class="chart-legend">
     <div *ngFor="let legendItem of chartLegendItems" class="chart-legend-item">

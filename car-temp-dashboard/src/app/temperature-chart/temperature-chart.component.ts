@@ -52,7 +52,7 @@ export class TemperatureChartComponent implements OnInit {
 
     //'//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220630.csv'
     this.temperatureData = await this.dm.loadData(this.selectedDataset);
-    const chart = await this.initChart('chart', this.temperatureData);
+    const chart = this.initChart('chart', this.temperatureData);
     this.temperatureMetadata = this.dm.analyzeDataset(this.temperatureData);
   }
 
