@@ -62,6 +62,21 @@ export class DataManagerService {
     return results;
   }
 
+  loadDatasets() {
+    return {
+      datasets: [
+        {
+          date: '6/29/2022',
+          url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220629.csv',
+        },
+        {
+          date: '6/30/2022',
+          url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220630.csv',
+        },
+      ],
+    };
+  }
+
   /**
    * Computes min, max, mean, and median values for temperature dataset
    * @param data temperature dataset

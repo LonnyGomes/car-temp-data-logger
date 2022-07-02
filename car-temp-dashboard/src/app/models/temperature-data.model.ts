@@ -43,3 +43,11 @@ export interface TemperatureDataMetadata {
   internalMed: number;
   internalMod: number;
 }
+
+export interface TemperatureDataset {
+  date: string;
+  url: string;
+}
+export interface TemperatureListings {
+  datasets: TemperatureDataset[];
+}
