@@ -42,6 +42,8 @@ export class TemperatureChartComponent implements OnInit {
 
   private TRANSITION_DURATION = 2000;
 
+  private MAX_Y_TEMPERATURE = 160;
+
   constructor(private dm: DataManagerService) {
     this.chartLegendItems = this.dm.getLegendItems();
   }
@@ -109,15 +111,7 @@ export class TemperatureChartComponent implements OnInit {
     // Add Y axis
     const y = d3
       .scaleLinear()
-      .domain([
-        0,
-        d3.max(data, (d) =>
-          Math.max(
-            d[TemperatureDataField.INTERNAL_SENSOR],
-            d[TemperatureDataField.EXTERNAL_SENSOR]
-          )
-        ) as number,
-      ])
+      .domain([0, this.MAX_Y_TEMPERATURE])
       .range([this.height, 0])
       .nice();
 
@@ -236,12 +230,13 @@ export class TemperatureChartComponent implements OnInit {
       .scaleLinear()
       .domain([
         0,
-        d3.max(data, (d) =>
-          Math.max(
-            d[TemperatureDataField.INTERNAL_SENSOR],
-            d[TemperatureDataField.EXTERNAL_SENSOR]
-          )
-        ) as number,
+        // d3.max(data, (d) =>
+        //   Math.max(
+        //     d[TemperatureDataField.INTERNAL_SENSOR],
+        //     d[TemperatureDataField.EXTERNAL_SENSOR]
+        //   )
+        // ) as number,
+        this.MAX_Y_TEMPERATURE,
       ])
       .range([this.height, 0])
       .nice();
