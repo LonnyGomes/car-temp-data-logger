@@ -21,11 +21,11 @@
 </div>
 
 <div class="dashboard-card">
-  <select name="temperatureDropdown" [(ngModel)]="selectedDataset" (ngModelChange)="onTemperatureDropdownChange($event)">
+  <select class="chart-dropdown" name="temperatureDropdown" [(ngModel)]="selectedDataset" (ngModelChange)="onTemperatureDropdownChange($event)">
     <option *ngFor="let dataset of temperatureListings?.datasets" [value]="dataset.url">{{dataset.date | date: 'ccc, MMMM dd YYYY'}}</option>
   </select>
 
-  <span class="header">{{ temperatureMetadata?.startTimestamp | date: 'ccc, MMMM dd YYYY'}}  ({{ temperatureMetadata?.startTimestamp | date:'HH:mm' }} - {{ temperatureMetadata?.endTimestamp | date:'HH:mm'}})</span>
+  <!-- <span class="header">{{ temperatureMetadata?.startTimestamp | date: 'ccc, MMMM dd YYYY'}}  ({{ temperatureMetadata?.startTimestamp | date:'HH:mm' }} - {{ temperatureMetadata?.endTimestamp | date:'HH:mm'}})</span> -->
 
   <div class="chart-legend">
     <div *ngFor="let legendItem of chartLegendItems" class="chart-legend-item">
@@ -33,6 +33,8 @@
       <span class="chart-legend-label" [innerText]="legendItem.label"></span>
     </div>
   </div>
-  <div id="chart"></div>
+  <div class="chart-container">
+    <div id="chart"></div>
+  </div>
 </div>
 

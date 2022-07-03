@@ -9,14 +9,14 @@
 
     .chart-line {
       fill: none;
-      stroke-width: 2px;
+      stroke-width: 3px;
     }
     .chart-axis-grid line {
       stroke: #ccc;
     }
 
     .tick text {
-      font-size: 0.9rem;
+      font-size: 1.1rem;
     }
 }
 
@@ -58,4 +58,14 @@
   .table-data {
     padding: 5px 10px;
   }
+}
+
+.chart-container {
+  width: 100%;
+  max-width: 700px;
+}
+
+.chart-dropdown {
+  max-width: 250px;
+  margin-bottom: 20px;
 }
