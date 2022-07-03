@@ -23,7 +23,7 @@ import {
   styleUrls: ['./temperature-chart.component.scss'],
 })
 export class TemperatureChartComponent implements OnInit {
-  margin = { top: 20, right: 60, bottom: 50, left: 60 };
+  margin = { top: 20, right: 65, bottom: 50, left: 65 };
   width = 750 - this.margin.left - this.margin.right;
   height = 650 - this.margin.top - this.margin.bottom;
   containerWidth = this.width + this.margin.left + this.margin.right;
@@ -119,9 +119,8 @@ export class TemperatureChartComponent implements OnInit {
       .append('g')
       .attr('class', 'axis chart-axis-y')
       .call(
-        d3
-          .axisLeft(y)
-          .tickFormat((d, idx) => (idx % 2 === 0 ? d.toString() : ''))
+        d3.axisLeft(y)
+        //.tickFormat((d, idx) => (idx % 2 === 0 ? d.toString() : ''))
       )
       // Add label
       .append('text')
@@ -135,7 +134,7 @@ export class TemperatureChartComponent implements OnInit {
           (this.height - this.margin.top - this.margin.bottom) / 2
         )
       )
-      .attr('y', -40); // Relative to the y axis
+      .attr('y', -this.margin.left + 15); // Relative to the y axis
 
     // add y grid axis
     const yAxisGrid = d3
@@ -171,7 +170,7 @@ export class TemperatureChartComponent implements OnInit {
           (this.height - this.margin.top - this.margin.bottom) / 2
         )
       )
-      .attr('y', 45); // Relative to the y axis
+      .attr('y', this.margin.right - 15); // Relative to the y axis
 
     // add sensor line 1
     chart
