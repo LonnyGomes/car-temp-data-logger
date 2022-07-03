@@ -213,8 +213,6 @@ export class TemperatureChartComponent implements OnInit {
     const xAxis = d3.axisBottom(x);
     chart
       .selectAll<SVGGElement, TemperatureDataModel[]>('.chart-axis-x')
-      // .transition()
-      // .duration(this.TRANSITION_DURATION)
       .call(xAxis);
 
     // Add left Y axis
@@ -239,8 +237,6 @@ export class TemperatureChartComponent implements OnInit {
 
     chart
       .selectAll<SVGGElement, TemperatureDataModel[]>('.chart-axis-y')
-      .transition()
-      .duration(this.TRANSITION_DURATION)
       .call(yLeftAxis);
 
     // Add light sensitivity Y axis to the right side
@@ -256,8 +252,6 @@ export class TemperatureChartComponent implements OnInit {
     const yRightAxis = d3.axisRight(yRight).ticks(5);
     chart
       .selectAll<SVGGElement, TemperatureDataModel[]>('.chart-axis-y-right')
-      .transition()
-      .duration(this.TRANSITION_DURATION)
       .call(yRightAxis);
 
     // add hover listeners
