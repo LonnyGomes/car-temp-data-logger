@@ -81,10 +81,6 @@ export class DataManagerService {
           date: '6/27/2022',
           url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220627.csv',
         },
-        {
-          date: '6/26/2022',
-          url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220626.csv',
-        },
       ],
     };
   }
