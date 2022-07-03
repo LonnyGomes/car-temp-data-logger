@@ -54,7 +54,8 @@ export class TemperatureChartComponent implements OnInit {
 
     //'//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220630.csv'
     this.temperatureData = await this.dm.loadData(this.selectedDataset);
-    const chart = this.initChart('chart', this.temperatureData);
+    const chart = this.initChart('chart');
+    this.updateChart('chart', this.temperatureData);
     this.temperatureMetadata = this.dm.analyzeDataset(this.temperatureData);
   }
 
@@ -75,17 +76,12 @@ export class TemperatureChartComponent implements OnInit {
       .y((d) => y(d[sensorName]));
   }
 
-  private initChart(selectorId: string, data: TemperatureDataModel[]) {
-    const dateValues = data.map((d) => d[TemperatureDataField.DATE].getTime());
-    const onMouseOver = () => {};
-    const onMouseMove = (e: MouseEvent) => {
-      const x0 = x.invert(d3.pointer(e)[0]);
-
-      const dataIdx = d3.bisect(dateValues, x0.getTime(), 0);
-      const selectedData = data[dataIdx];
-      console.log('e', selectedData);
-    };
-    const onMouseOut = () => {};
+  /**
+   * Create D3 SVG chart
+   * @param selectorId CSS id for SVG container
+   * @returns generated d3 chart
+   */
+  private initChart(selectorId: string) {
     const chart = d3
       .select(`#${selectorId}`)
       .append('svg')
@@ -97,14 +93,8 @@ export class TemperatureChartComponent implements OnInit {
       .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`);
 
     // Add X axis --> it is a date format
-    const [startDate, endDate] = d3.extent(
-      data,
-      (d) => d[TemperatureDataField.DATE]
-    );
-    const d1: Date = startDate as Date;
-    const d2: Date = endDate as Date;
 
-    const x = d3.scaleTime().domain([d1, d2]).range([0, this.width]);
+    const x = d3.scaleTime().range([0, this.width]);
 
     chart
       .append('g')
@@ -119,11 +109,7 @@ export class TemperatureChartComponent implements OnInit {
       .attr('y', this.margin.bottom); // Relative to the y axis
 
     // Add Y axis
-    const y = d3
-      .scaleLinear()
-      .domain([0, this.MAX_Y_TEMPERATURE])
-      .range([this.height, 0])
-      .nice();
+    const y = d3.scaleLinear().range([this.height, 0]).nice();
 
     chart
       .append('g')
@@ -154,14 +140,7 @@ export class TemperatureChartComponent implements OnInit {
     chart.append('g').attr('class', 'chart-axis-grid y').call(yAxisGrid);
 
     // Add light sensitivity Y axis
-    const y2 = d3
-      .scaleLinear()
-      .domain([
-        0,
-        d3.max(data, (d) => d[TemperatureDataField.LIGHT_SENSOR]) as number,
-      ])
-      .range([this.height, 0])
-      .nice();
+    const y2 = d3.scaleLinear().range([this.height, 0]).nice();
 
     chart
       .append('g')
@@ -182,52 +161,45 @@ export class TemperatureChartComponent implements OnInit {
       )
       .attr('y', this.margin.right - 15); // Relative to the y axis
 
-    // add sensor line 1
+    // create sensor lines
     chart
+      .selectAll('chart-line')
+      .data(SENSOR_NAMES)
+      .enter()
       .append('path')
-      .datum(data)
-      .attr('class', `chart-line ${TemperatureDataField.INTERNAL_SENSOR}`)
-      .style(
-        'stroke',
-        this.dm.SENSOR_COLOR[TemperatureDataField.INTERNAL_SENSOR]
-      )
-      .attr('d', this.genD3Line(TemperatureDataField.INTERNAL_SENSOR, x, y));
-
-    // add sensor line 2
-    chart
-      .append('path')
-      .data([data])
-      .attr('class', `chart-line ${TemperatureDataField.EXTERNAL_SENSOR}`)
-      .style(
-        'stroke',
-        this.dm.SENSOR_COLOR[TemperatureDataField.EXTERNAL_SENSOR]
-      )
-      .attr('d', this.genD3Line(TemperatureDataField.EXTERNAL_SENSOR, x, y));
-
-    // add light sensitivity line
-    chart
-      .append('path')
-      .data([data])
-      .attr('class', `chart-line ${TemperatureDataField.LIGHT_SENSOR}`)
-      .style('stroke', this.dm.SENSOR_COLOR[TemperatureDataField.LIGHT_SENSOR])
-      .attr('d', this.genD3Line(TemperatureDataField.LIGHT_SENSOR, x, y2));
+      .attr('class', (sensorName) => `chart-line ${sensorName}`)
+      .style('stroke', (sensorName) => this.dm.SENSOR_COLOR[sensorName]);
 
     // add area for mouse over
     chart
       .append('rect')
       .style('fill', 'none')
       .style('pointer-events', 'all')
+      .attr('class', 'chart-focus-box')
       .attr('width', this.width)
-      .attr('height', this.height)
-      .on('mouseover', onMouseOver)
-      .on('mousemove', onMouseMove)
-      .on('mouseout', onMouseOut);
+      .attr('height', this.height);
 
     return chart;
   }
 
+  /**
+   * Update the D3 chart with new temperature dataset
+   * @param selectorId CSS id of SVG container
+   * @param data temperature dataset
+   */
   private updateChart(selectorId: string, data: TemperatureDataModel[]) {
     const chart = d3.select(`#${selectorId}`);
+
+    const dateValues = data.map((d) => d[TemperatureDataField.DATE].getTime());
+    const onMouseOver = () => {};
+    const onMouseMove = (e: MouseEvent) => {
+      const x0 = x.invert(d3.pointer(e)[0]);
+
+      const dataIdx = d3.bisect(dateValues, x0.getTime(), 0);
+      const selectedData = data[dataIdx];
+      console.log('e', selectedData);
+    };
+    const onMouseOut = () => {};
 
     // Add x axis
     const [startDate, endDate] = d3.extent(
@@ -287,6 +259,13 @@ export class TemperatureChartComponent implements OnInit {
       .transition()
       .duration(this.TRANSITION_DURATION)
       .call(yRightAxis);
+
+    // add hover listeners
+    chart
+      .select('.chart-focus-box')
+      .on('mouseover', onMouseOver)
+      .on('mousemove', onMouseMove)
+      .on('mouseout', onMouseOut);
 
     // update lines
     for (let sensorName of SENSOR_NAMES) {
