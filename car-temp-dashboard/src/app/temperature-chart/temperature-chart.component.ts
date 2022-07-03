@@ -176,7 +176,7 @@ export class TemperatureChartComponent implements OnInit {
     // add sensor line 1
     chart
       .append('path')
-      .data([data])
+      .datum(data)
       .attr('class', `chart-line ${TemperatureDataField.INTERNAL_SENSOR}`)
       .style(
         'stroke',
@@ -221,8 +221,8 @@ export class TemperatureChartComponent implements OnInit {
     const xAxis = d3.axisBottom(x);
     chart
       .selectAll<SVGGElement, TemperatureDataModel[]>('.chart-axis-x')
-      .transition()
-      .duration(this.TRANSITION_DURATION)
+      // .transition()
+      // .duration(this.TRANSITION_DURATION)
       .call(xAxis);
 
     // Add left Y axis
