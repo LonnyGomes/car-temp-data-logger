@@ -76,6 +76,16 @@ export class TemperatureChartComponent implements OnInit {
   }
 
   private initChart(selectorId: string, data: TemperatureDataModel[]) {
+    const dateValues = data.map((d) => d[TemperatureDataField.DATE].getTime());
+    const onMouseOver = () => {};
+    const onMouseMove = (e: MouseEvent) => {
+      const x0 = x.invert(d3.pointer(e)[0]);
+
+      const dataIdx = d3.bisect(dateValues, x0.getTime(), 0);
+      const selectedData = data[dataIdx];
+      console.log('e', selectedData);
+    };
+    const onMouseOut = () => {};
     const chart = d3
       .select(`#${selectorId}`)
       .append('svg')
@@ -201,6 +211,17 @@ export class TemperatureChartComponent implements OnInit {
       .attr('class', `chart-line ${TemperatureDataField.LIGHT_SENSOR}`)
       .style('stroke', this.dm.SENSOR_COLOR[TemperatureDataField.LIGHT_SENSOR])
       .attr('d', this.genD3Line(TemperatureDataField.LIGHT_SENSOR, x, y2));
+
+    // add area for mouse over
+    chart
+      .append('rect')
+      .style('fill', 'none')
+      .style('pointer-events', 'all')
+      .attr('width', this.width)
+      .attr('height', this.height)
+      .on('mouseover', onMouseOver)
+      .on('mousemove', onMouseMove)
+      .on('mouseout', onMouseOut);
 
     return chart;
   }
