@@ -18,10 +18,20 @@ export class DataManagerService {
     [TemperatureDataField.LIGHT_SENSOR]: '#FFB562',
   };
 
+  FIELD_COLOR = {
+    [TemperatureDataField.DATE]: '#171717',
+    ...this.SENSOR_COLOR,
+  };
+
   SENSOR_LABEL = {
-    [TemperatureDataField.EXTERNAL_SENSOR]: 'external °F',
-    [TemperatureDataField.INTERNAL_SENSOR]: 'car cabin °F',
-    [TemperatureDataField.LIGHT_SENSOR]: 'light sensitivity %',
+    [TemperatureDataField.EXTERNAL_SENSOR]: 'External °F',
+    [TemperatureDataField.INTERNAL_SENSOR]: 'Car cabin °F',
+    [TemperatureDataField.LIGHT_SENSOR]: 'Light sensitivity %',
+  };
+
+  FIELD_LABEL = {
+    [TemperatureDataField.DATE]: 'Time',
+    ...this.SENSOR_LABEL,
   };
 
   constructor() {}
@@ -60,6 +70,29 @@ export class DataManagerService {
     }
 
     return results;
+  }
+
+  loadDatasets() {
+    return {
+      datasets: [
+        {
+          date: '6/30/2022',
+          url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220630.csv',
+        },
+        {
+          date: '6/29/2022',
+          url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220629.csv',
+        },
+        {
+          date: '6/28/2022',
+          url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220628.csv',
+        },
+        {
+          date: '6/27/2022',
+          url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220627.csv',
+        },
+      ],
+    };
   }
 
   /**

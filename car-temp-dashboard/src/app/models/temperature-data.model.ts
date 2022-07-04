@@ -7,11 +7,24 @@ export enum TemperatureDataField {
 
 export type SensorName =
   | TemperatureDataField.INTERNAL_SENSOR
-  | TemperatureDataField.EXTERNAL_SENSOR;
+  | TemperatureDataField.EXTERNAL_SENSOR
+  | TemperatureDataField.LIGHT_SENSOR;
+
+export type FieldName =
+  | TemperatureDataField.DATE
+  | TemperatureDataField.INTERNAL_SENSOR
+  | TemperatureDataField.EXTERNAL_SENSOR
+  | TemperatureDataField.LIGHT_SENSOR;
 
 export const SENSOR_NAMES: SensorName[] = [
   TemperatureDataField.INTERNAL_SENSOR,
   TemperatureDataField.EXTERNAL_SENSOR,
+  TemperatureDataField.LIGHT_SENSOR,
+];
+
+export const FIELD_NAMES: FieldName[] = [
+  TemperatureDataField.DATE,
+  ...SENSOR_NAMES,
 ];
 
 export interface TemperatureLegendItem {
@@ -42,4 +55,12 @@ export interface TemperatureDataMetadata {
   internalMean: number;
   internalMed: number;
   internalMod: number;
+}
+
+export interface TemperatureDataset {
+  date: string;
+  url: string;
+}
+export interface TemperatureListings {
+  datasets: TemperatureDataset[];
 }
