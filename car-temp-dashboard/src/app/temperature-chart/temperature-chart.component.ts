@@ -8,6 +8,8 @@ import { Component, OnInit } from '@angular/core';
 import { DataManagerService } from '../services/data-manager.service';
 import * as d3 from 'd3';
 import {
+  FieldName,
+  FIELD_NAMES,
   SensorName,
   SENSOR_NAMES,
   TemperatureDataField,
@@ -202,6 +204,14 @@ export class TemperatureChartComponent implements OnInit {
     const chart = d3.select(`#${selectorId}`);
 
     const dateValues = data.map((d) => d[TemperatureDataField.DATE].getTime());
+    const formatDateToTime = (date: Date) => {
+      const hour = date.getHours();
+      const mins = date.getMinutes();
+      const secs = date.getSeconds();
+      return `${hour < 10 ? '0' : ''}${hour}:${mins < 10 ? '0' : ''}${mins}:${
+        secs < 10 ? '0' : ''
+      }${secs}`;
+    };
     const onMouseOver = () => {
       chart.select('.chart-hover-line').attr('opacity', 1);
       chart.select('.chart-hover-labels').attr('opacity', 1);
@@ -232,18 +242,20 @@ export class TemperatureChartComponent implements OnInit {
 
       const hoverLabels = chart
         .select('.chart-hover-labels')
-        .selectAll<SVGTextElement, SensorName>('.chart-hover-label')
-        .data(SENSOR_NAMES, (d) => d);
+        .selectAll<SVGTextElement, FieldName>('.chart-hover-label')
+        .data(FIELD_NAMES, (d) => d);
 
       hoverLabels
         .join('text')
         .text(
           (d) =>
-            `${this.dm.SENSOR_LABEL[d]}: ${
-              Math.round(selectedData[d] * 100) / 100
+            `${this.dm.FIELD_LABEL[d]}: ${
+              d === TemperatureDataField.DATE
+                ? formatDateToTime(selectedData[d])
+                : Math.round(selectedData[d] * 100) / 100
             }`
         )
-        .attr('fill', (d) => this.dm.SENSOR_COLOR[d])
+        .attr('fill', (d) => this.dm.FIELD_COLOR[d])
         .attr('class', 'chart-hover-label')
         .attr('text-anchor', positionIsLeft ? 'end' : 'start')
         .attr('x', xPos + labelAnchorPadding)

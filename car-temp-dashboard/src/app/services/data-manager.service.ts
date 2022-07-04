@@ -18,10 +18,20 @@ export class DataManagerService {
     [TemperatureDataField.LIGHT_SENSOR]: '#FFB562',
   };
 
+  FIELD_COLOR = {
+    [TemperatureDataField.DATE]: '#171717',
+    ...this.SENSOR_COLOR,
+  };
+
   SENSOR_LABEL = {
     [TemperatureDataField.EXTERNAL_SENSOR]: 'External °F',
     [TemperatureDataField.INTERNAL_SENSOR]: 'Car cabin °F',
     [TemperatureDataField.LIGHT_SENSOR]: 'Light sensitivity %',
+  };
+
+  FIELD_LABEL = {
+    [TemperatureDataField.DATE]: 'Time',
+    ...this.SENSOR_LABEL,
   };
 
   constructor() {}
