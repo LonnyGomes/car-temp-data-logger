@@ -21,6 +21,7 @@ body {
   background-color: $clr-bg;
   color: $clr-font;
   font-family: $font-body;
+  user-select: none;
 }
 
 .dashboard-card {
@@ -33,6 +34,7 @@ body {
   margin: 20px;
   padding: 10px;
 
+  touch-action: none;
   .header {
     font-family: $font-header;
     font-size: 1.2rem;

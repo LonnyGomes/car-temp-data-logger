@@ -212,11 +212,15 @@ export class TemperatureChartComponent implements OnInit {
         secs < 10 ? '0' : ''
       }${secs}`;
     };
-    const onMouseOver = () => {
+    const onTouchStart = (e: TouchEvent) => {
+      onMouseOver(e);
+      onMouseMove(e);
+    };
+    const onMouseOver = (e: MouseEvent | TouchEvent) => {
       chart.select('.chart-hover-line').attr('opacity', 1);
       chart.select('.chart-hover-labels').attr('opacity', 1);
     };
-    const onMouseMove = (e: MouseEvent) => {
+    const onMouseMove = (e: MouseEvent | TouchEvent) => {
       const [xPos] = d3.pointer(e);
       const x0 = x.invert(xPos);
       const positionIsLeft = xPos > (this.width * 2) / 3;
@@ -261,9 +265,10 @@ export class TemperatureChartComponent implements OnInit {
         .attr('x', xPos + labelAnchorPadding)
         .attr('y', (d, idx) => minSensorValue + labelGap * (idx + 1));
     };
-    const onMouseOut = () => {
+    const onMouseOut = (e: MouseEvent | TouchEvent) => {
       chart.select('.chart-hover-line').attr('opacity', 0);
       chart.select('.chart-hover-labels').attr('opacity', 0);
+      onMouseMove(e);
     };
 
     // Add x axis
@@ -323,8 +328,11 @@ export class TemperatureChartComponent implements OnInit {
     chart
       .select('.chart-focus-box')
       .on('mouseover', onMouseOver)
+      .on('touchstart', onTouchStart)
       .on('mousemove', onMouseMove)
-      .on('mouseout', onMouseOut);
+      .on('touchmove', onMouseMove)
+      .on('mouseout', onMouseOut)
+      .on('touchend', onMouseOut);
 
     // update lines
     for (let sensorName of SENSOR_NAMES) {
