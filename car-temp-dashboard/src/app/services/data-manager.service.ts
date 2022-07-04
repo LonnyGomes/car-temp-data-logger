@@ -19,14 +19,14 @@ export class DataManagerService {
   };
 
   FIELD_COLOR = {
-    [TemperatureDataField.DATE]: '#171717',
+    [TemperatureDataField.DATE]: '#5a5a5a',
     ...this.SENSOR_COLOR,
   };
 
   SENSOR_LABEL = {
     [TemperatureDataField.EXTERNAL_SENSOR]: 'External °F',
     [TemperatureDataField.INTERNAL_SENSOR]: 'Car cabin °F',
-    [TemperatureDataField.LIGHT_SENSOR]: 'Light sensitivity %',
+    [TemperatureDataField.LIGHT_SENSOR]: 'Light %',
   };
 
   FIELD_LABEL = {

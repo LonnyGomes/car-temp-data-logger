@@ -1,4 +1,10 @@
 @import '../../styles.scss';
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+}
 ::ng-deep {
     .chart-axis-label {
       fill: #000;
@@ -32,20 +38,22 @@
 .chart-legend {
   display: flex;
   justify-content: center;
+  width: 100%;
+  justify-content: space-evenly;
 
   .chart-legend-item {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    gap: 15px;
 
     .chart-legend-label {
-      font-size: 0.9rem;
-      padding: 5px 20px 0px 0px;
+      font-size: 0.8rem;
+      color: #5a5a5a;
     }
 
     .chart-legend-color {
-      width: 20px;
-      height: 6px;
+      width: 10px;
+      height: 10px;
     }
   }
 }
@@ -59,7 +67,7 @@
 }
 
 .temperature-metadata-table {
-
+  font-size: 0.9rem;
   th {
     padding: 5px 5px;
   }
@@ -77,4 +85,7 @@
 .chart-dropdown {
   max-width: 250px;
   margin-bottom: 20px;
+  font-size: 1rem;
+  color: $clr-primary;
+  font-weight: bold;
 }
