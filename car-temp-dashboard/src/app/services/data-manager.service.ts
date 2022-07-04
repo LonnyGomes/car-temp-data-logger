@@ -76,6 +76,10 @@ export class DataManagerService {
     return results;
   }
 
+  /**
+   * Retrieves the list of temperature listing
+   * @returns TemperatureListing object
+   */
   async loadListings() {
     const listings = (await json<TemperatureListings>(
       this.TEMPERATURE_LISTINGS_URL
