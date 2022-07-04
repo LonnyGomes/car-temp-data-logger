@@ -61,6 +61,12 @@ export interface TemperatureDataset {
   date: string;
   url: string;
 }
+export interface MaxTemperatureDataset {
+  date: string;
+  temperature: number;
+}
+
 export interface TemperatureListings {
   datasets: TemperatureDataset[];
+  maxTemperatures: MaxTemperatureDataset[];
 }

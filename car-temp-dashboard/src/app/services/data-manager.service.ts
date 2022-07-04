@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { csv, max, min, median, mean, mode } from 'd3';
+import { csv, max, min, median, mean, mode, json } from 'd3';
 import {
   TemperatureCSVDataModel,
   TemperatureDataField,
   TemperatureDataMetadata,
   TemperatureDataModel,
   TemperatureLegendItem,
+  TemperatureListings,
 } from '../models/temperature-data.model';
 
 @Injectable({
@@ -33,6 +34,9 @@ export class DataManagerService {
     [TemperatureDataField.DATE]: 'Time',
     ...this.SENSOR_LABEL,
   };
+
+  TEMPERATURE_LISTINGS_URL =
+    '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/temperature-listings.json';
 
   constructor() {}
 
@@ -72,27 +76,12 @@ export class DataManagerService {
     return results;
   }
 
-  loadDatasets() {
-    return {
-      datasets: [
-        {
-          date: '6/30/2022',
-          url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220630.csv',
-        },
-        {
-          date: '6/29/2022',
-          url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220629.csv',
-        },
-        {
-          date: '6/28/2022',
-          url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220628.csv',
-        },
-        {
-          date: '6/27/2022',
-          url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220627.csv',
-        },
-      ],
-    };
+  async loadListings() {
+    const listings = (await json<TemperatureListings>(
+      this.TEMPERATURE_LISTINGS_URL
+    )) as TemperatureListings;
+
+    return listings;
   }
 
   /**
