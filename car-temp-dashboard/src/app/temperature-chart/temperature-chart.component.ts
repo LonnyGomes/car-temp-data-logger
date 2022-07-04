@@ -163,12 +163,23 @@ export class TemperatureChartComponent implements OnInit {
 
     // create sensor lines
     chart
-      .selectAll('chart-line')
+      .selectAll('.chart-line')
       .data(SENSOR_NAMES)
       .enter()
       .append('path')
       .attr('class', (sensorName) => `chart-line ${sensorName}`)
       .style('stroke', (sensorName) => this.dm.SENSOR_COLOR[sensorName]);
+
+    // add hover line
+    chart
+      .append('g')
+      .append('path')
+      .attr('class', 'chart-hover-line')
+      .attr('opacity', 0)
+      .attr('d', `M 0, ${this.height} 0,0`);
+
+    // create group for hover labels
+    chart.append('g').attr('class', 'chart-hover-labels');
 
     // add area for mouse over
     chart
@@ -191,15 +202,57 @@ export class TemperatureChartComponent implements OnInit {
     const chart = d3.select(`#${selectorId}`);
 
     const dateValues = data.map((d) => d[TemperatureDataField.DATE].getTime());
-    const onMouseOver = () => {};
+    const onMouseOver = () => {
+      chart.select('.chart-hover-line').attr('opacity', 1);
+      chart.select('.chart-hover-labels').attr('opacity', 1);
+    };
     const onMouseMove = (e: MouseEvent) => {
-      const x0 = x.invert(d3.pointer(e)[0]);
+      const [xPos] = d3.pointer(e);
+      const x0 = x.invert(xPos);
+      const positionIsLeft = xPos > (this.width * 2) / 3;
+      const labelGap = 30;
+      const labelAnchorPadding = positionIsLeft ? -7 : 7;
 
       const dataIdx = d3.bisect(dateValues, x0.getTime(), 0);
       const selectedData = data[dataIdx];
-      console.log('e', selectedData);
+
+      // determine the y position of the smallest value
+      // with a hardcoded floor
+      const minSensorValue = Math.min(
+        yLeft(
+          d3.min<number>(SENSOR_NAMES.map((d) => selectedData[d])) as number
+        ),
+        this.height * (2 / 3)
+      );
+
+      // update position of hover line and data
+      chart
+        .select('.chart-hover-line')
+        .attr('d', `M ${xPos},${this.height} ${xPos},0`);
+
+      const hoverLabels = chart
+        .select('.chart-hover-labels')
+        .selectAll<SVGTextElement, SensorName>('.chart-hover-label')
+        .data(SENSOR_NAMES, (d) => d);
+
+      hoverLabels
+        .join('text')
+        .text(
+          (d) =>
+            `${this.dm.SENSOR_LABEL[d]}: ${
+              Math.round(selectedData[d] * 100) / 100
+            }`
+        )
+        .attr('fill', (d) => this.dm.SENSOR_COLOR[d])
+        .attr('class', 'chart-hover-label')
+        .attr('text-anchor', positionIsLeft ? 'end' : 'start')
+        .attr('x', xPos + labelAnchorPadding)
+        .attr('y', (d, idx) => minSensorValue + labelGap * (idx + 1));
     };
-    const onMouseOut = () => {};
+    const onMouseOut = () => {
+      chart.select('.chart-hover-line').attr('opacity', 0);
+      chart.select('.chart-hover-labels').attr('opacity', 0);
+    };
 
     // Add x axis
     const [startDate, endDate] = d3.extent(
