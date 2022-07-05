@@ -1,0 +1,27 @@
+@import '../../styles.scss';
+
+.table {
+  border-collapse: collapse
+}
+
+.table-header {
+  padding-right: 20px;
+}
+
+.txt-strong {
+  font-weight: bold;
+}
+
+.txt-em {
+  color: $clr-primary;
+  font-style: italic;
+}
+
+.table-data {
+  padding: 10px 2px;
+  font-style: italic;
+}
+
+.table-row {
+  background-color: $clr-bg;
+}

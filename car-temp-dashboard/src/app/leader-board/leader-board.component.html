@@ -1,0 +1,16 @@
+
+<div class="header">Leader Board</div>
+
+<p><span class="txt-strong">Max Temperature:</span> &nbsp;<span class="txt-em">{{maxTemperature}}</span></p>
+<table class="table">
+  <tr>
+    <th class="table-header">Rank</th>
+    <th class="table-header">Name</th>
+    <th class="table-header">Guess</th>
+  </tr>
+  <tr *ngFor="let item of temperatureGuesses; let idx=index;" [ngClass]="{'table-row': idx % 2 ==  0}">
+    <td><span class="table-data">{{ item.weight }}</span></td>
+    <td><span class="table-data">{{ item.name }}</span></td>
+    <td><span class="table-data">{{ item.guess }}</span></td>
+  </tr>
+</table>

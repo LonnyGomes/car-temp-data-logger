@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
-import { csv, max, min, median, mean, mode } from 'd3';
+import { csv, max, min, median, mean, mode, json } from 'd3';
 import {
   TemperatureCSVDataModel,
   TemperatureDataField,
   TemperatureDataMetadata,
   TemperatureDataModel,
+  TemperatureGuess,
   TemperatureLegendItem,
+  TemperatureListings,
 } from '../models/temperature-data.model';
 
 @Injectable({
@@ -33,6 +35,11 @@ export class DataManagerService {
     [TemperatureDataField.DATE]: 'Time',
     ...this.SENSOR_LABEL,
   };
+
+  TEMPERATURE_LISTINGS_URL =
+    '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/temperature-listings.json';
+  TEMPERATURE_GUESSES_URL =
+    '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/temperature-guesses.json';
 
   constructor() {}
 
@@ -72,27 +79,54 @@ export class DataManagerService {
     return results;
   }
 
-  loadDatasets() {
-    return {
-      datasets: [
-        {
-          date: '6/30/2022',
-          url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220630.csv',
-        },
-        {
-          date: '6/29/2022',
-          url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220629.csv',
-        },
-        {
-          date: '6/28/2022',
-          url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220628.csv',
-        },
-        {
-          date: '6/27/2022',
-          url: '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220627.csv',
-        },
-      ],
-    };
+  /**
+   * Retrieves the list of temperature listing
+   * @returns TemperatureListing object
+   */
+  async loadListings() {
+    const listings = (await json<TemperatureListings>(
+      this.TEMPERATURE_LISTINGS_URL
+    )) as TemperatureListings;
+
+    return listings;
+  }
+
+  /**
+   * Returns a list of name/guesses pairs
+   * @returns list of temperature guesses
+   */
+  async loadGuesses() {
+    const listings = await this.loadListings();
+    const maxTemperature = Math.max(
+      ...listings.maxTemperatures.map((item) => item.temperature)
+    );
+    const guesses = (await json<TemperatureGuess[]>(
+      this.TEMPERATURE_GUESSES_URL
+    )) as TemperatureGuess[];
+
+    const weightedGuesses = guesses.map((item) => {
+      item.weight = Math.abs(item.guess - maxTemperature);
+      return item;
+    });
+
+    weightedGuesses.sort((a, b) => {
+      const aWeight = a.weight || maxTemperature;
+      const bWeight = b.weight || maxTemperature;
+      return aWeight - bWeight;
+    });
+
+    // calculate rankings accounting for "ties"
+    let prevWeight = -1;
+    let curRank = 0;
+    for (let item of weightedGuesses) {
+      if ((item.weight as number) !== prevWeight) {
+        curRank += 1;
+      }
+      prevWeight = item.weight as number;
+      item.weight = curRank;
+    }
+    console.log('maxTemperature', weightedGuesses);
+    return { maxTemperature, guesses: weightedGuesses };
   }
 
   /**

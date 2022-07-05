@@ -15,6 +15,7 @@ import {
   TemperatureDataField,
   TemperatureDataMetadata,
   TemperatureDataModel,
+  TemperatureGuess,
   TemperatureLegendItem,
   TemperatureListings,
 } from '../models/temperature-data.model';
@@ -35,6 +36,8 @@ export class TemperatureChartComponent implements OnInit {
   chartLegendItems: TemperatureLegendItem[];
   temperatureListings: TemperatureListings | null = null;
   selectedDataset: string | null = null;
+  temperatureGuesses: TemperatureGuess[] | null = null;
+  maxTemperature = 0.0;
 
   private CHART_LABEL = {
     TIME: 'Time',
@@ -51,8 +54,11 @@ export class TemperatureChartComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.temperatureListings = this.dm.loadDatasets();
+    this.temperatureListings = await this.dm.loadListings();
     this.selectedDataset = this.temperatureListings.datasets[0].url;
+    const { maxTemperature, guesses } = await this.dm.loadGuesses();
+    this.maxTemperature = maxTemperature;
+    this.temperatureGuesses = guesses;
 
     //'//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/20220630.csv'
     this.temperatureData = await this.dm.loadData(this.selectedDataset);
