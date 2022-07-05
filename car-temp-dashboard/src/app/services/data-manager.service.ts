@@ -5,6 +5,7 @@ import {
   TemperatureDataField,
   TemperatureDataMetadata,
   TemperatureDataModel,
+  TemperatureGuess,
   TemperatureLegendItem,
   TemperatureListings,
 } from '../models/temperature-data.model';
@@ -37,6 +38,8 @@ export class DataManagerService {
 
   TEMPERATURE_LISTINGS_URL =
     '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/temperature-listings.json';
+  TEMPERATURE_GUESSES_URL =
+    '//s3.amazonaws.com/www.lonnygomes.com/data/car-temperatures/temperature-guesses.json';
 
   constructor() {}
 
@@ -86,6 +89,33 @@ export class DataManagerService {
     )) as TemperatureListings;
 
     return listings;
+  }
+
+  /**
+   * Returns a list of name/guesses pairs
+   * @returns list of temperature guesses
+   */
+  async loadGuesses() {
+    const listings = await this.loadListings();
+    const maxTemperature = Math.max(
+      ...listings.maxTemperatures.map((item) => item.temperature)
+    );
+    const guesses = (await json<TemperatureGuess[]>(
+      this.TEMPERATURE_GUESSES_URL
+    )) as TemperatureGuess[];
+
+    const weightedGuesses = guesses.map((item) => {
+      item.weight = Math.abs(item.guess - maxTemperature);
+      return item;
+    });
+
+    weightedGuesses.sort((a, b) => {
+      const aWeight = a.weight || maxTemperature;
+      const bWeight = b.weight || maxTemperature;
+      return aWeight - bWeight;
+    });
+    console.log('maxTemperature', maxTemperature);
+    return { maxTemperature, guesses: weightedGuesses };
   }
 
   /**

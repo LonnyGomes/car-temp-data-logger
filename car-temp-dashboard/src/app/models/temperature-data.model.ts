@@ -70,3 +70,9 @@ export interface TemperatureListings {
   datasets: TemperatureDataset[];
   maxTemperatures: MaxTemperatureDataset[];
 }
+
+export interface TemperatureGuess {
+  name: string;
+  guess: number;
+  weight?: number;
+}

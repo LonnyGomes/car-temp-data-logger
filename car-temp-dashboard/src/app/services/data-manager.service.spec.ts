@@ -102,4 +102,10 @@ describe('DataManagerService', () => {
       ).toBeDefined();
     });
   });
+
+  describe('loadGuesses', () => {
+    it('should exist', () => {
+      expect(service.loadGuesses).toBeTruthy();
+    });
+  });
 });
