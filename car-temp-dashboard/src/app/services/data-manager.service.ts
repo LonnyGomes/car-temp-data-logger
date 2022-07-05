@@ -114,7 +114,18 @@ export class DataManagerService {
       const bWeight = b.weight || maxTemperature;
       return aWeight - bWeight;
     });
-    console.log('maxTemperature', maxTemperature);
+
+    // calculate rankings accounting for "ties"
+    let prevWeight = -1;
+    let curRank = 0;
+    for (let item of weightedGuesses) {
+      if ((item.weight as number) !== prevWeight) {
+        curRank += 1;
+      }
+      prevWeight = item.weight as number;
+      item.weight = curRank;
+    }
+    console.log('maxTemperature', weightedGuesses);
     return { maxTemperature, guesses: weightedGuesses };
   }
 
