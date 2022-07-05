@@ -1,1 +1,16 @@
-<p>leader-board works!</p>
+
+<div class="header">Leader Board</div>
+
+<p><span class="txt-strong">Max Temperature:</span> &nbsp;<span class="txt-em">{{maxTemperature}}</span></p>
+<table class="table">
+  <tr>
+    <th class="table-header">Rank</th>
+    <th class="table-header">Name</th>
+    <th class="table-header">Guess</th>
+  </tr>
+  <tr *ngFor="let item of temperatureGuesses; let rank=index;" [ngClass]="{'table-row': rank % 2 ==  0}">
+    <td><span class="table-data">{{ rank + 1 }}</span></td>
+    <td><span class="table-data">{{ item.name }}</span></td>
+    <td><span class="table-data">{{ item.guess }}</span></td>
+  </tr>
+</table>
